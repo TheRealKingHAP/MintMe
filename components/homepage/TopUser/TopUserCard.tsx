@@ -12,7 +12,7 @@ type UserCardProps = {
 function TopUserCard({username, img, mainplatform, introduction}: UserCardProps) {
   return (
     <div className='flex flex-col space-y-2  items-center text-center 2xl:items-start 2xl:text-left  w-52 h-max cursor-pointer'>
-        <div className='relative w-full h-48 bg-gray-100'>
+        <div className='relative w-full h-48 bg-gradient-radial from-white to-gray-500 rounded-md'>
             <Image src={img} layout='fill' objectFit='contain' className='transition-none 2xl:hover:scale-125  2xl:transition 2xl:ease-in-out 2xl:duration-700' />
         </div>
         <div className='h-16'>

@@ -14,7 +14,9 @@ function TopUsers({}: Props) {
     .then(res => res.json())
     .then((data: UserType[]) => userList = data)
     .catch(err => console.log(err.message))
-    setUsers(userList.slice(0,5))
+    if(userList.length > 0) {
+      setUsers(userList.slice(0,5))
+    }
   }
   useEffect(() => {
     getTopUsers()
