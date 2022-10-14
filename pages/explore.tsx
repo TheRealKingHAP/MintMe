@@ -3,13 +3,13 @@ import Link from 'next/link'
 import React, { useState, useEffect} from 'react'
 import SkeletonUserCard from '../components/skeletons/SkeletonUserCard'
 import UserCard from '../components/users/UserCard'
+import { User } from '../src/models/User'
 import { UserType } from '../types/users/UserType'
 
 const Explore = () => {
-    const [users, setUsers] = useState<UserType[]>([])
-
+    const [users, setUsers] = useState<User[]>([])
+    const [selectedCountry, setSelectedCountry] = useState('');
     //Filter the user countries and remove the duplicated ones
-    const [selectedCountry, setSelectedCountry] = useState("México");
     const userCountries: string[] = users.map((m) => m.country);
     const result: string[] = Array.from(new Set(userCountries));
     //Handle the select element when option is changed
@@ -17,17 +17,18 @@ const Explore = () => {
         setSelectedCountry(event.currentTarget.value);
     }
     //Filter the array of users by country
-    const filteredUsers: UserType[] = users.filter((a) => {
+    const filteredUsers: User[] = users.filter((a) => {
         return a.country == selectedCountry;
     })
     //Fetch the list of users from api
     const getUsers = async () => {
-        let userList: UserType[] = []
+        let userList: User[] = []
         const result = await fetch('http://localhost:3000/api/users')
         .then(res => res.json())
-        .then((data: UserType[]) => userList = data)
+        .then((data: User[]) => userList = data)
         .catch(err => console.log(err.message))
         setUsers(userList);
+        setSelectedCountry(userList[0].country)
     }
     useEffect (() => {
         getUsers()
@@ -45,7 +46,7 @@ const Explore = () => {
                     </select>
                 </form>
                 <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5  gap-12 justify-items-center sm:justify-items-start pb-12  w-full`}>
-                    {users.length > 0 ? filteredUsers.map((user: UserType, index) => (
+                    {users.length > 0 ? filteredUsers.map((user: User, index) => (
                         <Link href={'/user/'+user.first_name} key={index}>
                             <a>
                             <UserCard id={user.id} first_name={user.first_name} last_name={user.last_name} country={user.country} email={user.email} profile_pic={user.profile_pic} public={user.public} />

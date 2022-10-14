@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb'
 import { GetServerSideProps } from 'next'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -12,32 +13,34 @@ import DonateForm from '../../components/users/userPage/donations/DonateForm'
 import DonationBlock from '../../components/users/userPage/donations/DonationBlock'
 import FeedBio from '../../components/users/userPage/FeedBio'
 import UserBanner from '../../components/users/userPage/UserBanner'
+import { User } from '../../src/models/User'
 import { Donation } from '../../types/users/userPage/donation/DonationType'
 import { UserType } from '../../types/users/UserType'
 
 function UserPage() {
   const router = useRouter()
-  const [user, setUser] = useState<UserType>()
+  const [user, setUser] = useState<User>()
+  const [userLoading, setUserLoading] = useState(false);
+  const [donationsLoading, setDonationsLoading] = useState(false);
   const [donations, setDonations] = useState<Donation[]>([])
-  const getData = async (id?: string | string[]) => {
-    let userList: UserType[] = []
-    let donationList: Donation[] = []
-    const reqUsers = await fetch('http://localhost:3000/api/users')
+  async function getData (id?: string | string[]){
+    let userData: User = {} as User
+    const reqUsers = await fetch(`http://localhost:3000/api/users/${id}`)
     .then(res => res.json())
-    .then((data: UserType[]) => userList = data)
+    .then((data: User) => userData = data)
     .catch(err => console.log(err.message))
-    const selectedUser = userList.filter((a) => {
-      return a.first_name == id
-    })   
-    const reqDonation = await fetch('http://localhost:3000/api/donations')
+    setUser(userData);
+    getDonations(userData.id)
+  }
+  const getDonations = async (id?: ObjectId) => {
+    setDonationsLoading(true);
+    let donationList: Donation[] = []
+    const reqDonation = await fetch(`http://localhost:3000/api/donations/${id?.toString()}`)
     .then(res => res.json())
     .then((data: Donation[]) => donationList = data)
     .catch(err => console.log(err.message));
-    const userDonations: Donation[] = donationList.filter((i) => {
-      return i.receiver.id.$oid == selectedUser[0].id.$oid
-    })
-    setUser(selectedUser[0]);
-    setDonations(userDonations);
+    setDonations(donationList);
+    setDonationsLoading(false)
   }
   useEffect(() => {
     if(!router.isReady) return;
@@ -52,8 +55,9 @@ function UserPage() {
           {user && <FeedBio title={user.public.feed.bio.title} description={user.public.feed.bio.description} thumbnail={user.public.feed.bio.thumbnail}/>}
           {!user && <SkeletonUserFeed />}
           <div className='space-y-5'>
-          {donations.length > 0 && <DonationBlock donations={donations}/>}
-          {donations.length <= 0 && <SkeletonDonationBlock />}
+          {(donations.length > 0 && !donationsLoading) ? <DonationBlock donations={donations}/> : null}
+          {donationsLoading && <SkeletonDonationBlock />}
+          {(!donationsLoading && donations.length <= 0) ? <div className='font-semibold text-gray-600 text-xl text-center'>No donations</div>: null}
           </div>
         </div>
         <div id='' className='flex-1'>

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import React, { useState, useEffect } from 'react'
+import { User } from '../../../src/models/User'
 import { UserType } from '../../../types/users/UserType'
 import SkeletonTopUserCard from '../../skeletons/SkeletonTopUserCard'
 import TopUserCard from './TopUserCard'
@@ -7,15 +8,16 @@ import TopUserCard from './TopUserCard'
 type Props = {}
 
 function TopUsers({}: Props) {
-  const [users, setUsers] = useState<UserType[]>()
+  const [users, setUsers] = useState<User[]>()
   const getTopUsers = async () => {
-    let userList: UserType[] = []
+    let userList: User[] = []
     const result = await fetch('http://localhost:3000/api/users')
     .then(res => res.json())
-    .then((data: UserType[]) => userList = data)
+    .then((data: User[]) => userList = data)
     .catch(err => console.log(err.message))
     if(userList.length > 0) {
       setUsers(userList.slice(0,5))
+      console.log(userList)
     }
   }
   useEffect(() => {

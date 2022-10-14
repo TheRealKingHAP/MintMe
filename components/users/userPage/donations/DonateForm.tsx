@@ -26,7 +26,7 @@ function DonateForm({username, user_wallet}: {username: string, user_wallet:stri
     <div className='flex flex-col text-center w-full  xl:text-left  xl:w-3/4 h-max rounded-md bg-gray-100 p-2 xl:p-5'>
         <form className='space-y-10  landscape:px-16' onSubmit={(e)=>{e.preventDefault();}} >
             <label className='font-bold text-gray-700 text-base lg:text-lg xl:text-xl 2xl:text-2xl'>Donate to {username} !</label>
-            <p className='text-gray-600 w-full line-clamp-6 font-medium'>Hi! all donations are going strictly to upgrade my set up and buy some videogames requested by you guys. </p>
+                <p className='text-gray-600 w-full line-clamp-6 font-medium'>Hi! all donations are going strictly to upgrade my set up and buy some videogames requested by you guys. </p>
                 <div className='flex flex-col space-y-5 w-full'>
                     <div className='w-full flex '>
                         <select className='xl:p-2 landscape:w-24 xl:w-24 rounded-tl-md rounded-bl-md border-r-[1px] font-medium outline-none text-gray-600 ' >
