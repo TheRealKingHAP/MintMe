@@ -17,7 +17,6 @@ function TopUsers({}: Props) {
     .catch(err => console.log(err.message))
     if(userList.length > 0) {
       setUsers(userList.slice(0,5))
-      console.log(userList)
     }
   }
   useEffect(() => {
