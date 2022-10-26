@@ -47,7 +47,7 @@ function UserPage() {
     getData(router.query.userName)
   }, [router.isReady])
   return (
-    <div className='h-max lg:pt-[96px] pb-12 space-y-12  flex flex-col items-center'>
+    <div className='h-max pb-12 space-y-12  flex flex-col items-center'>
       {user && <UserBanner first_name={user.first_name} last_name={user.last_name} profile_pic={user.profile_pic} banner_img={user.public.banner_img} />}
       {!user && <SkeletonUserBanner />}
       <div id='Feed' className='w-3/4 h-max flex flex-col space-y-5 lg:space-y-0 lg:flex-row lg:space-x-10'>

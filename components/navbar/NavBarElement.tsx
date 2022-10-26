@@ -2,10 +2,11 @@ import Link from 'next/link'
 import React from 'react'
 import { NavElementType } from '../../types/navbar/NavElementType'
 
-function NavBarElement({Icon, onClickFunction}: NavElementType) {
+function NavBarElement({Icon, onClickFunction, label}: NavElementType) {
   return (
-    <div className='flex flex-col justify-center items-center cursor-pointer' onClick={onClickFunction}>
-        <Icon  className='h-7 w-7 text-gray-500 hover:text-gray-900 '/>
+    <div className='flex space-x-2 justify-center items-center cursor-pointer' onClick={onClickFunction}>
+      {Icon && <Icon  className='h-7 w-7 text-gray-500 hover:text-gray-900 '/>}
+      <p>{label}</p>
     </div>
 
 

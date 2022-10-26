@@ -13,7 +13,7 @@ const Home: NextPage = () => {
         <meta name="description" content="Web 3.0 crypto donation service for streamers and content creators" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className='flex flex-col h-max landscape:pt-24 space-y-16 landscape:space-y-16 lg:pt-[96px] pb-5  items-center landscape:2xl:space-y-10 text-gray-800'>
+      <main className='flex flex-col h-max landscape:pt-24 space-y-16 landscape:space-y-16 pb-5  items-center landscape:2xl:space-y-10 text-gray-800'>
         <div id='section-1' className='w-full h-screen landscape:space-y-16 landscape:2xl:space-y-0  flex flex-col-reverse 2xl:flex-row'>
           <div className='landscape:2xl:h-3/4 w-full flex justify-center 2xl:items-center'>
             <div className='relative h-56 w-56 landscape:mt-16 landscape:2xl:mt-0 xl:h-[30rem] xl:w-[30rem]'>

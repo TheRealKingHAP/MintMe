@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useWalletModal, WalletDisconnectButton, WalletIcon} from '@solana/wallet-adapter-react-ui';
+import { useWalletModal, WalletDisconnectButton, WalletIcon, WalletMultiButton} from '@solana/wallet-adapter-react-ui';
 import NavBarElement from './NavBarElement';
 import { BsPersonCircle, BsSearch } from 'react-icons/bs';
 import {HiMenu, HiOutlineX} from 'react-icons/hi';
@@ -22,7 +22,7 @@ function NavBar() {
       router.push('/');
     }
   return (
-    <div className={`${ isActive ? 'max-h-72' : 'max-h-20'} lg:absolute bg-white flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-5 lg:space-y-0 px-5 py-5 lg:p-12 w-full lg:h-[72px]  shadow-sm transition-all transform ease-in-out duration-300`}>
+    <div className={`${ isActive ? 'max-h-72' : 'max-h-20'}  bg-white flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-5 lg:space-y-0 px-5 py-5 lg:p-12 w-full lg:h-[72px]  shadow-sm transition-all transform ease-in-out duration-300`}>
         <div className='flex justify-between items-center'>
         <Link href={'/'}>
           <a className='font-bold text-2xl text-gray-700 flex items-center space-x-2'>
@@ -39,16 +39,13 @@ function NavBar() {
           <Link href={'/explore'}><a className='active:p-1 lg:active:p-0 hover:text-gray-900 active:bg-gray-100 active:py-2 lg:active:bg-transparent lg:active:py-0 transition-all ease-in-out duration-100'><li>Explore</li></a></Link>
           <Link href={'/donate'}><a className='active:p-1 lg:active:p-0 hover:text-gray-900 active:bg-gray-100 active:py-2 lg:active:bg-transparent lg:active:py-0 transition-all ease-in-out duration-100'><li>Donate</li></a></Link>
           {!wallet?.adapter.connected ? 
-          <li><NavBarElement Icon={BsPersonCircle} onClickFunction={!wallet ? onRequestConnectWallet : redirectProfile}/></li>
+          <li><NavBarElement label='Log in' onClickFunction={!wallet ? onRequestConnectWallet : redirectProfile}/></li>
           :
           <li>
-            <div className='w-32 h-10 bg-violet-900 text-white font-semibold flex items-center space-x-2 p-2 rounded-md'>
-            <WalletIcon wallet={wallet} className={'h-7 w-7'}/>
-            <p className='text-sm truncate'>{wallet.adapter.publicKey?.toBase58()}</p>
-            </div>
+            <WalletMultiButton />
           </li>
           }
-          
+          {!wallet?.adapter.connected && <Link href={'/signup'}><a className='bg-violet-500 rounded-3xl w-24 text-center p-2 text-white font-semibold'><li>Sign up</li></a></Link>}
         </ul>
     </div>
   )
