@@ -9,7 +9,11 @@ import Link from 'next/link';
 import { Router, useRouter } from 'next/router';
 import Image from 'next/image';
 
-function NavBar() {
+interface Props {
+  className?: string
+}
+
+function NavBar({className}: Props) {
     const router = useRouter();
     const {wallet} = useWallet();
     const {setVisible} = useWalletModal();
@@ -22,7 +26,7 @@ function NavBar() {
       router.push('/');
     }
   return (
-    <div className={`${ isActive ? 'max-h-72' : 'max-h-20'}  bg-white flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-5 lg:space-y-0 px-5 py-5 lg:p-12 w-full lg:h-[72px]  shadow-sm transition-all transform ease-in-out duration-300`}>
+    <div className={`${ isActive ? 'max-h-72' : 'max-h-20'}  bg-white flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-5 lg:space-y-0 px-5 py-5 lg:p-12 w-full lg:h-[72px]  shadow-sm transition-all transform ease-in-out duration-300 ${className}`}>
         <div className='flex justify-between items-center'>
         <Link href={'/'}>
           <a className='font-bold text-2xl text-gray-700 flex items-center space-x-2'>

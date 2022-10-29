@@ -4,7 +4,7 @@ import { NavElementType } from '../../types/navbar/NavElementType'
 
 function NavBarElement({Icon, onClickFunction, label}: NavElementType) {
   return (
-    <div className='flex space-x-2 justify-center items-center cursor-pointer' onClick={onClickFunction}>
+    <div className='flex space-x-2 justify-start landspace:2xl:justify-center items-center cursor-pointer' onClick={onClickFunction}>
       {Icon && <Icon  className='h-7 w-7 text-gray-500 hover:text-gray-900 '/>}
       <p>{label}</p>
     </div>

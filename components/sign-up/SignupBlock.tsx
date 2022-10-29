@@ -6,6 +6,8 @@ import CustomSelectOption from './form/Select/CustomSelectOption';
 import SignupSelectCountry from './form/SignupSelectCountry';
 import SignupSelectPlatform from './form/SignupSelectPlatform';
 import SignupSelectPlatformCustom from './form/SignupSelectPlatformCustom';
+import SignupTextAreaInput from './form/SignupTextAreaInput';
+import SignupImageInput from './SignupImageInput';
 import SignupInput from './SignupInput'
 import SignUpSelect from './SignUpSelect';
 
@@ -14,7 +16,8 @@ type Props = {}
 function SignupBlock({}: Props) {
   const [email, setEmail] = useState<string>('');
   const [username, setUserName] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
+  const [about, setAbout] = useState<string>('');
+  const [greetings, setGreetings] = useState<string>('')
   const [selectedCountry, setSelectedCountry] = useState<string>('')
   const [selectedPlatform, setSelectedPlatform] = useState<string>('');
   const [formSelectIDX, setFormSelectIDX] = useState<number>(0);
@@ -24,7 +27,7 @@ function SignupBlock({}: Props) {
     switch (IDX) {
       case 0:
         return (
-          <div id='PersonalInfo' className='space-y-12 flex flex-col items-center w-full'>
+          <div id='PersonalInfo' className='space-y-12 mt-5 flex flex-col items-center w-full'>
             <SignupInput title='E-mail' inputType='email' inputValue={email} handleChange={(value: string) => setEmail(value) }/>
             <SignupInput title='Username' inputType='text' inputValue={username} handleChange={(value:string) => setUserName(value)}/>
             <SignupSelectCountry handleChange={(value:string) => setSelectedCountry(value)} />
@@ -32,9 +35,30 @@ function SignupBlock({}: Props) {
         )
       case 1:
         return (
-          <div id='Bio' className='space-y-12 flex flex-col items-center w-full'>
-            <SignupInput title='Description' inputType='text' inputValue={description} handleChange={(value: string) => setDescription(value) }/>
+          <div id='Bio' className='space-y-12 flex flex-col mt-5 items-center w-full'>
+            <SignupImageInput username={username}  />
+            <SignupInput title='Greetings!' inputType='text' inputValue={greetings} handleChange={(value: string) => setGreetings(value)} />
+            <SignupTextAreaInput title='About' inputValue={about} handleChange={(value: string) => setAbout(value)} className={'border-2 border-gray-300 rounded-3xl p-2 h-28 w-full focus:border-violet-400 outline-none resize-none'}/>
             <SignupSelectPlatform handleChange={(value:string) => setSelectedPlatform(value)}/>
+          </div>
+        )
+      default:
+        return null
+    }
+  }
+  const renderTitle = (IDX: number) => {
+    switch(IDX){
+      case 0:
+        return (
+          <div className='w-full mt-12 landscape:2xl:mt-12 flex flex-col items-center'>
+            <h3 className='text-center font-bold text-gray-800 text-2xl landscape:2xl:text-3xl'>Create an account</h3>
+            <p className='text-center mt-2 w-3/4 landscape:2xl:w-full text-base landscape:2xl:text-xl text-gray-400'>Let's get started, please enter the information required below</p>
+          </div>
+        )
+      case 1:
+        return (
+          <div className='w-full mt-12 landscape:2xl:mt-12 flex flex-col items-center'>
+            <h3 className='text-center font-bold text-gray-800 text-2xl landscape:2xl:text-3xl'>Let's finish your page</h3>
           </div>
         )
       default:
@@ -49,24 +73,20 @@ function SignupBlock({}: Props) {
     console.log('E-mail: ' + email);
     console.log('Username: ' + username);
     console.log('Country: ' + selectedCountry);
-    console.log('Description: ' + description);
+    console.log('Description: ' + about);
     console.log('Platform: ' + selectedPlatform);
   }
   return (
-    <div className='bg-white mt-16 flex flex-col landscape:space-y-12 landscape:2xl:space-y-0 justify-between items-center h-full w-full landscape:2xl:h-full landscape:2xl:p-5 landscape:2xl:w-[24rem]'>
-        <form onSubmit={handleSubmit} className={' flex flex-col items-center w-3/4 landscape:2xl:w-full'}>
+    <div className='bg-white flex flex-col space-y-16 pb-5 landscape:2xl:space-y-0 justify-between items-center h-full  w-full landscape:2xl:w-3/4'>
+        {renderTitle(formSelectIDX)}
+        <form onSubmit={handleSubmit} className={'flex flex-col items-center w-3/4 landscape:2xl:w-[24rem]'}>
           {
             renderSelectedForm(formSelectIDX)
           }
-          <button type={formSelectIDX == 2 ? 'submit' : 'button'} onClick={formSelectIDX == 2 ? () => {} : handleFormStepChange} className='p-2 mt-36 landscape:mt-16 landscape:2xl:mt-52 w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium'>{formSelectIDX == 2 ? 'Sign up' : 'Next'}</button>
+          <button type={'submit'} className={`p-2 mt-24 w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === 2 ? 'block' : 'hidden'} `}>{'Sign up'}</button>
         </form>
-        <div className=''>
-          <ul className='inline-flex space-x-5'>
-            <li className={`rounded-full h-4 w-4 ${formSelectIDX == 0 ? 'bg-violet-500' : 'bg-gray-300'}`}></li>
-            <li className={`rounded-full h-4 w-4 ${formSelectIDX == 1 ? 'bg-violet-500' : 'bg-gray-300'}`}></li>
-            <li className={`rounded-full h-4 w-4 ${formSelectIDX == 2 ? 'bg-violet-500' : 'bg-gray-300'}`}></li>
-          </ul>
-        </div>
+        <button type={'button'} onClick={formSelectIDX == 2 ? () => {} : handleFormStepChange} className={`p-2 mt-24  w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === 2 ? 'hidden' : 'block'} `}>{'Next'}</button>
+
     </div>
   )
 }
