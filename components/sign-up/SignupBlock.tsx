@@ -1,15 +1,11 @@
 import React, { useState } from 'react'
 import Countries from '../../constants/countries';
 import Platforms from '../../constants/platforms';
-import CustomSelect from './form/Select/CustomSelect';
-import CustomSelectOption from './form/Select/CustomSelectOption';
 import SignupSelectCountry from './form/SignupSelectCountry';
 import SignupSelectPlatform from './form/SignupSelectPlatform';
-import SignupSelectPlatformCustom from './form/SignupSelectPlatformCustom';
 import SignupTextAreaInput from './form/SignupTextAreaInput';
 import SignupImageInput from './SignupImageInput';
 import SignupInput from './SignupInput'
-import SignUpSelect from './SignUpSelect';
 
 type Props = {}
 
@@ -21,8 +17,6 @@ function SignupBlock({}: Props) {
   const [selectedCountry, setSelectedCountry] = useState<string>('')
   const [selectedPlatform, setSelectedPlatform] = useState<string>('');
   const [formSelectIDX, setFormSelectIDX] = useState<number>(0);
-  const country = new Countries()
-  const platform = new Platforms()
   const renderSelectedForm = (IDX: number) => {
     switch (IDX) {
       case 0:

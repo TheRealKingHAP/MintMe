@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import React from 'react'
 import { User } from '../../src/models/User'
-import { UserType } from '../../types/users/UserType'
 
 function UserCard(userInfo : User) {
   return (
@@ -10,7 +9,7 @@ function UserCard(userInfo : User) {
             <Image src={userInfo.profile_pic} objectFit='contain' layout='fill' />
         </div>
         <div className='text-center'>
-            <p className='font-semibold text-gray-700'>{userInfo.first_name}</p>
+            <p className='font-semibold text-gray-700'>{userInfo.username}</p>
             <p>{userInfo.country}</p>
         </div>
     </div>

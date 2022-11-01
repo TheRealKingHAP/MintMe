@@ -20,7 +20,7 @@ export default async function handler(
             const client: MongoClient = await clientPromise
             const db: Db = client.db(MONGODB_DB)
             const collection: Collection = db.collection(USER_COLLECTION_NAME ?? '')
-            const user: User = (await collection.findOne({"first_name": `${userName}`})) as User
+            const user: User = (await collection.findOne({"username": `${userName}`})) as User
             res.status(200).json(user)
         } catch (error) {
             res.status(400).json({error})

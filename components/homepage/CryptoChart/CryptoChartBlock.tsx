@@ -1,11 +1,11 @@
 import Image from 'next/image'
 import React, {useState, useEffect} from 'react'
+import FormatInt from '../../../src/functions/FormatInt';
 import { CoinMarketData } from '../../../types/coingecko/CoinMarketDataType';
 
 type Props = {}
 
 function CryptoChartBlock({}: Props) {
-  const amountFormat = Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'});
   const [coinData, setCoinData] = useState<CoinMarketData>();
   //Function to fetch some data from coingecko to display on the block
   const getData = async () => {
@@ -33,7 +33,7 @@ function CryptoChartBlock({}: Props) {
       </div>
       <div className=' flex flex-col justify-center items-center'>
         <h4 className='font-bold text-gray-700 landscape:2xl:text-xl'>Trading Volume</h4>
-        {coinData && <p className='font-medium text-gray-600 landscape:2xl:text-2xl mt-16'>{amountFormat.format(coinData.total_volume)}</p>}
+        {coinData && <p className='font-medium text-gray-600 landscape:2xl:text-2xl mt-16'>{FormatInt(coinData.total_volume , 'compact', 'USD', 'currency')}</p>}
       </div>
 
     </div>

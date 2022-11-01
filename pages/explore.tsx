@@ -27,8 +27,11 @@ const Explore = () => {
         .then(res => res.json())
         .then((data: User[]) => userList = data)
         .catch(err => console.log(err.message))
-        setUsers(userList);
-        setSelectedCountry(userList[0].country)
+        if(userList.length > 0) {
+            setUsers(userList);
+            setSelectedCountry(userList[0].country)
+        }
+        return
     }
     useEffect (() => {
         getUsers()
@@ -47,9 +50,9 @@ const Explore = () => {
                 </form>
                 <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5  gap-12 justify-items-center sm:justify-items-start pb-12  w-full`}>
                     {users.length > 0 ? filteredUsers.map((user: User, index) => (
-                        <Link href={'/user/'+user.first_name} key={index}>
+                        <Link href={'/user/'+user.username} key={index}>
                             <a>
-                            <UserCard id={user.id} first_name={user.first_name} last_name={user.last_name} country={user.country} email={user.email} profile_pic={user.profile_pic} public={user.public} />
+                            <UserCard id={user.id} username={user.username} country={user.country} email={user.email} profile_pic={user.profile_pic} public={user.public} />
                             </a>
                         </Link>
                         

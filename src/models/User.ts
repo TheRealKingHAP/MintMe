@@ -4,8 +4,7 @@ export interface User {
     _id?: ObjectId,
     id?: ObjectId,
     profile_pic: string,
-    first_name: string,
-    last_name: string,
+    username: string,
     email: string,
     country: string,
     public:{

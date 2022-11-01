@@ -2,13 +2,12 @@ import Image from 'next/image'
 import React from 'react'
 
 interface UserBannerType{
-    first_name: string,
-    last_name: string,
+    username: string,
     profile_pic: string,
     banner_img: string
 }
 
-function UserBanner({first_name, last_name, profile_pic, banner_img } : UserBannerType) {
+function UserBanner({username, profile_pic, banner_img } : UserBannerType) {
   return (
     <div className='w-full flex flex-col justify-center items-center space-y-10'>
         <div className='w-full flex flex-col items-center relative'>
@@ -25,7 +24,7 @@ function UserBanner({first_name, last_name, profile_pic, banner_img } : UserBann
         </div>
         </div>
         <div className='w-full flex flex-col items-center'>
-            <p className='mt-10 font-bold text-base md:text-lg lg:text-xl xl:text-2xl'>{first_name} {last_name}</p>
+            <p className='mt-10 font-bold text-base md:text-lg lg:text-xl xl:text-2xl'>{username}</p>
         </div>
     </div>
   )

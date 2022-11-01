@@ -48,7 +48,7 @@ function UserPage() {
   }, [router.isReady])
   return (
     <div className='h-max pb-12 space-y-12  flex flex-col items-center'>
-      {user && <UserBanner first_name={user.first_name} last_name={user.last_name} profile_pic={user.profile_pic} banner_img={user.public.banner_img} />}
+      {user && <UserBanner username={user.username} profile_pic={user.profile_pic} banner_img={user.public.banner_img} />}
       {!user && <SkeletonUserBanner />}
       <div id='Feed' className='w-3/4 h-max flex flex-col space-y-5 lg:space-y-0 lg:flex-row lg:space-x-10'>
         <div id='' className='flex-1 space-y-10'>
@@ -61,7 +61,7 @@ function UserPage() {
           </div>
         </div>
         <div id='' className='flex-1'>
-          {user && <DonateForm username={user.first_name} user_wallet={user.public.public_wallet} />}
+          {user && <DonateForm username={user.username} user_wallet={user.public.public_wallet} />}
           {!user && <SkeletonDonationForm />}
         </div>
       </div>
