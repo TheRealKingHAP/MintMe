@@ -33,7 +33,7 @@ function CryptoChartBlock({}: Props) {
       </div>
       <div className=' flex flex-col justify-center items-center'>
         <h4 className='font-bold text-gray-700 landscape:2xl:text-xl'>Trading Volume</h4>
-        {coinData && <p className='font-medium text-gray-600 landscape:2xl:text-2xl mt-16'>{FormatInt(coinData.total_volume , 'compact', 'USD', 'currency')}</p>}
+        {coinData && <p className='font-medium text-gray-600 landscape:2xl:text-2xl mt-16'>{FormatInt({value: coinData.total_volume, currency:'USD', notation:'compact', style:'currency'})}</p>}
       </div>
 
     </div>

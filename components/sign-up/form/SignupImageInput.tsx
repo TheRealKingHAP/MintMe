@@ -11,8 +11,8 @@ function SignupImageInput({handleChange, username}: Props) {
     const imgInput = React.useRef<HTMLInputElement>(null);
     const handleImageChange = useCallback (async (e: React.ChangeEvent<HTMLInputElement>) => {
         if(e.target.files){
-            const file = e.target.files[0]
-            const base64 = await convertImgToBase64(file)
+            const file: File = e.target.files[0]
+            const base64: string = await convertImgToBase64(file)
             setAvatar(base64)
             handleChange && handleChange(base64);
         }

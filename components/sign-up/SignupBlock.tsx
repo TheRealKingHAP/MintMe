@@ -1,11 +1,12 @@
+import Image from 'next/image';
 import React, { useState } from 'react'
-import Countries from '../../constants/countries';
 import Platforms from '../../constants/platforms';
 import SignupSelectCountry from './form/SignupSelectCountry';
 import SignupSelectPlatform from './form/SignupSelectPlatform';
 import SignupTextAreaInput from './form/SignupTextAreaInput';
-import SignupImageInput from './SignupImageInput';
-import SignupInput from './SignupInput'
+import SignupImageInput from './form/SignupImageInput';
+import SignupInput from './form/SignupInput'
+import { SocialMedia } from '../../src/models/SocialMedia';
 
 type Props = {}
 
@@ -16,7 +17,11 @@ function SignupBlock({}: Props) {
   const [greetings, setGreetings] = useState<string>('')
   const [selectedCountry, setSelectedCountry] = useState<string>('')
   const [selectedPlatform, setSelectedPlatform] = useState<string>('');
+  const [socialMedia, setSocialMedia] = useState<SocialMedia>({facebook:'', instagram:'', twitch:'', twitter:'', youtube:''});
   const [formSelectIDX, setFormSelectIDX] = useState<number>(0);
+  const platform = new Platforms()
+
+  const formsLength: number = 3;
   const renderSelectedForm = (IDX: number) => {
     switch (IDX) {
       case 0:
@@ -34,6 +39,17 @@ function SignupBlock({}: Props) {
             <SignupInput title='Greetings!' inputType='text' inputValue={greetings} handleChange={(value: string) => setGreetings(value)} />
             <SignupTextAreaInput title='About' inputValue={about} handleChange={(value: string) => setAbout(value)} className={'border-2 border-gray-300 rounded-3xl p-2 h-28 w-full focus:border-violet-400 outline-none resize-none'}/>
             <SignupSelectPlatform handleChange={(value:string) => setSelectedPlatform(value)}/>
+          </div>
+        )
+      case 2:
+        return (
+          <div id='SocialMedia' className='space-y-12 flex flex-col mt-5 items-center w-full'>
+            {platform.platforms.map((platform, idx) => (
+              <div className='flex items-center space-x-5' key={idx}>
+                <Image src={platform.logo} height={42} width={42}/>
+                <SignupInput title={platform.name} inputType='text' inputValue={socialMedia[platform.name.toLowerCase() as keyof SocialMedia]} handleChange={(value:string) => setSocialMedia(socialMedia => ({...socialMedia, [platform.name.toLowerCase()]:value}))} />
+              </div>
+            ))}
           </div>
         )
       default:
@@ -55,6 +71,13 @@ function SignupBlock({}: Props) {
             <h3 className='text-center font-bold text-gray-800 text-2xl landscape:2xl:text-3xl'>Let's finish your page</h3>
           </div>
         )
+      case 2:
+        return (
+          <div className='w-full mt-12 landscape:2xl:mt-12 flex flex-col items-center'>
+            <h3 className='text-center font-bold text-gray-800 text-2xl landscape:2xl:text-3xl'>Just one last step</h3>
+            <p className='text-center mt-2 w-3/4 landscape:2xl:w-full text-base landscape:2xl:text-xl text-gray-400'>Link your social media</p>
+          </div>
+        )
       default:
         return null
     }
@@ -69,6 +92,7 @@ function SignupBlock({}: Props) {
     console.log('Country: ' + selectedCountry);
     console.log('Description: ' + about);
     console.log('Platform: ' + selectedPlatform);
+    console.log('Social Media:' + JSON.stringify(socialMedia));
   }
   return (
     <div className='bg-white flex flex-col space-y-16 pb-5 landscape:2xl:space-y-0 justify-between items-center h-full  w-full landscape:2xl:w-3/4'>
@@ -77,9 +101,9 @@ function SignupBlock({}: Props) {
           {
             renderSelectedForm(formSelectIDX)
           }
-          <button type={'submit'} className={`p-2 mt-24 w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === 2 ? 'block' : 'hidden'} `}>{'Sign up'}</button>
+          <button type={'submit'} className={`p-2 mt-24 w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === formsLength ? 'block' : 'hidden'} `}>{'Sign up'}</button>
         </form>
-        <button type={'button'} onClick={formSelectIDX == 2 ? () => {} : handleFormStepChange} className={`p-2 mt-24  w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === 2 ? 'hidden' : 'block'} `}>{'Next'}</button>
+        <button type={'button'} onClick={formSelectIDX == formsLength ? () => {} : handleFormStepChange} className={`p-2 mt-24  w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === formsLength ? 'hidden' : 'block'} `}>{'Next'}</button>
 
     </div>
   )

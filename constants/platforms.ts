@@ -24,6 +24,11 @@ export default class Platforms {
                 name: 'Youtube',
                 base_url: 'https://youtube.com',
                 logo: 'https://raw.githubusercontent.com/gauravghongde/social-icons/9d939e1c5b7ea4a24ac39c3e4631970c0aa1b920/SVG/Color/Youtube.svg'
+            },
+            {
+                name: 'Instagram',
+                base_url: 'https://instagram.com',
+                logo: 'https://raw.githubusercontent.com/gauravghongde/social-icons/master/SVG/Color/Instagram.svg'
             }
 
         ]
