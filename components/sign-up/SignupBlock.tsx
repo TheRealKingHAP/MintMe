@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import React, { useState } from 'react'
+import { BsArrowLeft } from 'react-icons/bs'
 import Platforms from '../../constants/platforms';
 import SignupSelectCountry from './form/SignupSelectCountry';
 import SignupSelectPlatform from './form/SignupSelectPlatform';
@@ -15,6 +16,7 @@ function SignupBlock({}: Props) {
   const [username, setUserName] = useState<string>('');
   const [about, setAbout] = useState<string>('');
   const [greetings, setGreetings] = useState<string>('')
+  const [profilePic, setProfilePic] = useState<string>('');
   const [selectedCountry, setSelectedCountry] = useState<string>('')
   const [selectedPlatform, setSelectedPlatform] = useState<string>('');
   const [socialMedia, setSocialMedia] = useState<SocialMedia>({facebook:'', instagram:'', twitch:'', twitter:'', youtube:''});
@@ -35,7 +37,7 @@ function SignupBlock({}: Props) {
       case 1:
         return (
           <div id='Bio' className='space-y-12 flex flex-col mt-5 items-center w-full'>
-            <SignupImageInput username={username}  />
+            <SignupImageInput username={username} handleChange={(value: string) => setProfilePic(value)} />
             <SignupInput title='Greetings!' inputType='text' inputValue={greetings} handleChange={(value: string) => setGreetings(value)} />
             <SignupTextAreaInput title='About' inputValue={about} handleChange={(value: string) => setAbout(value)} className={'border-2 border-gray-300 rounded-3xl p-2 h-28 w-full focus:border-violet-400 outline-none resize-none'}/>
             <SignupSelectPlatform handleChange={(value:string) => setSelectedPlatform(value)}/>
@@ -82,8 +84,14 @@ function SignupBlock({}: Props) {
         return null
     }
   }
-  const handleFormStepChange = () => {
-    setFormSelectIDX(formSelectIDX+1);
+  const handleFormStepChange = (step: 'Next' | 'Back') => {
+    if(step == 'Next'){
+      setFormSelectIDX(formSelectIDX+1);
+    }
+    if(step == 'Back'){
+      setFormSelectIDX(formSelectIDX-1);
+    }
+    return
   }
   function handleSubmit (e: React.FormEvent<HTMLFormElement>){
     e.preventDefault();
@@ -96,6 +104,12 @@ function SignupBlock({}: Props) {
   }
   return (
     <div className='bg-white flex flex-col space-y-16 pb-5 landscape:2xl:space-y-0 justify-between items-center h-full  w-full landscape:2xl:w-3/4'>
+        <div className='w-3/4 mt-5'>
+          <div onClick={formSelectIDX < 1 ? ()=>{} : () => handleFormStepChange('Back')} className={` w-max cursor-pointer flex items-center space-x-2 ${formSelectIDX < 1 ? 'hidden' : 'block'} `}>
+            <BsArrowLeft className={` h-7 w-7  text-gray-600`}/>
+            <p className='font-medium text-gray-600'>Back</p>
+          </div>
+        </div>
         {renderTitle(formSelectIDX)}
         <form onSubmit={handleSubmit} className={'flex flex-col items-center w-3/4 landscape:2xl:w-[24rem]'}>
           {
@@ -103,8 +117,7 @@ function SignupBlock({}: Props) {
           }
           <button type={'submit'} className={`p-2 mt-24 w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === formsLength ? 'block' : 'hidden'} `}>{'Sign up'}</button>
         </form>
-        <button type={'button'} onClick={formSelectIDX == formsLength ? () => {} : handleFormStepChange} className={`p-2 mt-24  w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === formsLength ? 'hidden' : 'block'} `}>{'Next'}</button>
-
+        <button type={'button'} onClick={formSelectIDX == formsLength ? () => {} : () => handleFormStepChange('Next')} className={`p-2 mt-24  w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === formsLength ? 'hidden' : 'block'} `}>{'Next'}</button>        
     </div>
   )
 }
