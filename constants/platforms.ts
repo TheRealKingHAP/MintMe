@@ -29,6 +29,11 @@ export default class Platforms {
                 name: 'Instagram',
                 base_url: 'https://instagram.com',
                 logo: 'https://raw.githubusercontent.com/gauravghongde/social-icons/master/SVG/Color/Instagram.svg'
+            },
+            {
+                name: 'TikTok',
+                base_url: 'https://tiktok.com',
+                logo: 'https://raw.githubusercontent.com/gauravghongde/social-icons/master/SVG/Color/Tik%20Tok.svg'
             }
 
         ]

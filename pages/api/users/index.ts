@@ -28,6 +28,8 @@ export default async function handler(
         break;
     case 'POST':
         try{
+            const user: User = JSON.parse(req.body)
+            console.log(user.email)
             res.status(200).json([])
         } catch (error){
             res.status(400).json({error})

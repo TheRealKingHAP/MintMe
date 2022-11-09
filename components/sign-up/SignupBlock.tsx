@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import React, { useState } from 'react'
-import { BsArrowLeft } from 'react-icons/bs'
+import { BsArrowLeft, BsCheck } from 'react-icons/bs'
 import Platforms from '../../constants/platforms';
 import SignupSelectCountry from './form/SignupSelectCountry';
 import SignupSelectPlatform from './form/SignupSelectPlatform';
@@ -8,10 +8,15 @@ import SignupTextAreaInput from './form/SignupTextAreaInput';
 import SignupImageInput from './form/SignupImageInput';
 import SignupInput from './form/SignupInput'
 import { SocialMedia } from '../../src/models/SocialMedia';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useWalletModal, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { User } from '../../src/models/User';
 
 type Props = {}
 
 function SignupBlock({}: Props) {
+  const {wallet} = useWallet()
+  const {setVisible} = useWalletModal();
   const [email, setEmail] = useState<string>('');
   const [username, setUserName] = useState<string>('');
   const [about, setAbout] = useState<string>('');
@@ -19,10 +24,13 @@ function SignupBlock({}: Props) {
   const [profilePic, setProfilePic] = useState<string>('');
   const [selectedCountry, setSelectedCountry] = useState<string>('')
   const [selectedPlatform, setSelectedPlatform] = useState<string>('');
-  const [socialMedia, setSocialMedia] = useState<SocialMedia>({facebook:'', instagram:'', twitch:'', twitter:'', youtube:''});
+  const [socialMedia, setSocialMedia] = useState<SocialMedia>({facebook:'', instagram:'', twitch:'', twitter:'', youtube:'', tiktok: ''});
   const [formSelectIDX, setFormSelectIDX] = useState<number>(0);
+  const [acceptedTC, setAcceptedTC] = useState<boolean>(false);
   const platform = new Platforms()
-
+  const onRequestConnectWallet = () => {
+    setVisible(true);
+  }
   const formsLength: number = 3;
   const renderSelectedForm = (IDX: number) => {
     switch (IDX) {
@@ -54,6 +62,24 @@ function SignupBlock({}: Props) {
             ))}
           </div>
         )
+      case 3:
+        return (
+          <div className='text-center landscape:2xl:mb-32'>
+            {wallet?.adapter.connected ? <p className='font-medium text-gray-600 mb-5'>Connected wallet:</p> : null}
+            <WalletMultiButton />
+            {
+              wallet?.adapter.connected ?
+              <div id='termsandconditions' className='mt-16 text-sm text-gray-500 flex items-center space-x-2'>
+                <p>I accept terms and conditions</p>
+                <div className={`h-5 w-5 border-2 border-gray-300 rounded-md cursor-pointer ${acceptedTC ? 'bg-violet-500' : null}`} onClick={() => setAcceptedTC(!acceptedTC)}>
+                  <BsCheck  className='w-full h-full text-white'/>
+                </div>
+              </div>
+              :
+              null
+            }
+          </div>
+        )
       default:
         return null
     }
@@ -77,7 +103,14 @@ function SignupBlock({}: Props) {
         return (
           <div className='w-full mt-12 landscape:2xl:mt-12 flex flex-col items-center'>
             <h3 className='text-center font-bold text-gray-800 text-2xl landscape:2xl:text-3xl'>Just one last step</h3>
-            <p className='text-center mt-2 w-3/4 landscape:2xl:w-full text-base landscape:2xl:text-xl text-gray-400'>Link your social media</p>
+            <p className='text-center mt-2 w-3/4 landscape:2xl:w-full text-base landscape:2xl:text-xl text-gray-400'>Link your social media (optional)</p>
+          </div>
+        )
+      case 3:
+        return (
+          <div className='w-full mt-12 landscape:2xl:mt-12 flex flex-col items-center'>
+            <h3 className='text-center font-bold text-gray-800 text-2xl landscape:2xl:text-3xl'>Connect your wallet</h3>
+            <p className='text-center mt-2 w-3/4 landscape:2xl:w-full text-base landscape:2xl:text-xl text-gray-400'>This will be the wallet you want to recieve the payments and log in</p>
           </div>
         )
       default:
@@ -93,7 +126,7 @@ function SignupBlock({}: Props) {
     }
     return
   }
-  function handleSubmit (e: React.FormEvent<HTMLFormElement>){
+  async function handleSubmit (e: React.FormEvent<HTMLFormElement>){
     e.preventDefault();
     console.log('E-mail: ' + email);
     console.log('Username: ' + username);
@@ -101,6 +134,36 @@ function SignupBlock({}: Props) {
     console.log('Description: ' + about);
     console.log('Platform: ' + selectedPlatform);
     console.log('Social Media:' + JSON.stringify(socialMedia));
+    let user: User = {
+      email: email,
+      country: selectedCountry,
+      username: username,
+      profile_pic: profilePic,
+      public: {
+        banner_img: '',
+        main_platform: selectedPlatform,
+        public_wallet: wallet?.adapter.publicKey || '',
+        feed: {
+          bio: {
+            title: '',
+            introduction: greetings,
+            description: about,
+            thumbnail: '',
+          }
+        },
+        social_media: {
+          ...socialMedia
+        }
+      }
+    }
+    if(acceptedTC){
+      const res = await fetch('http://localhost:3000/api/users/addUser',
+        {method: 'POST',
+        body: JSON.stringify(user)
+        }
+      )
+    }
+    return
   }
   return (
     <div className='bg-white flex flex-col space-y-16 pb-5 landscape:2xl:space-y-0 justify-between items-center h-full  w-full landscape:2xl:w-3/4'>
@@ -115,7 +178,12 @@ function SignupBlock({}: Props) {
           {
             renderSelectedForm(formSelectIDX)
           }
-          <button type={'submit'} className={`p-2 mt-24 w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === formsLength ? 'block' : 'hidden'} `}>{'Sign up'}</button>
+          {
+          wallet?.adapter.connected ? 
+            <button type={'submit'} className={`p-2 mt-24 w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === formsLength ? 'block' : 'hidden'} `}>{'Sign up'}</button>
+          :
+            null
+          }
         </form>
         <button type={'button'} onClick={formSelectIDX == formsLength ? () => {} : () => handleFormStepChange('Next')} className={`p-2 mt-24  w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === formsLength ? 'hidden' : 'block'} `}>{'Next'}</button>        
     </div>

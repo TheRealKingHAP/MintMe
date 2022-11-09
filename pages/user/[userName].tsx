@@ -30,7 +30,7 @@ function UserPage() {
     .then((data: User) => userData = data)
     .catch(err => console.log(err.message))
     setUser(userData);
-    getDonations(userData.id)
+    getDonations(userData._id)
   }
   const getDonations = async (id?: ObjectId) => {
     setDonationsLoading(true);
@@ -48,7 +48,7 @@ function UserPage() {
   }, [router.isReady])
   return (
     <div className='h-max pb-12 space-y-12  flex flex-col items-center'>
-      {user && <UserBanner username={user.username} profile_pic={user.profile_pic} banner_img={user.public.banner_img} />}
+      {user && <UserBanner username={user.username} profile_pic={user.profile_pic} banner_img={user.public.banner_img} social_media={user.public.social_media} />}
       {!user && <SkeletonUserBanner />}
       <div id='Feed' className='w-3/4 h-max flex flex-col space-y-5 lg:space-y-0 lg:flex-row lg:space-x-10'>
         <div id='' className='flex-1 space-y-10'>

@@ -22,7 +22,7 @@ export default async function handler(
             const client: MongoClient = await clientPromise
             const db: Db = client.db(MONGODB_DB)
             const collection: Collection = db.collection(DONATION_COLLECTION_NAME ?? '')
-            const donations: Donation[] = (await collection.find({"receiver.id": mongoId}).toArray()) as Donation[]
+            const donations: Donation[] = (await collection.find({"receiver.id": mongoId}).sort({"amount": -1}).limit(10).toArray()) as Donation[]
             res.status(200).json(donations)
         } catch (error) {
             res.status(400).json({error})

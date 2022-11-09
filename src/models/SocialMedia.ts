@@ -4,4 +4,5 @@ export interface SocialMedia{
     twitter: string,
     youtube: string,
     twitch: string,
+    tiktok: string
 }
