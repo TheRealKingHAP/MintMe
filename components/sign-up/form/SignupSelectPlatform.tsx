@@ -5,16 +5,16 @@ import CustomSelect from './Select/CustomSelect'
 import CustomSelectOption from './Select/CustomSelectOption'
 
 type Props = {
-    handleChange: CallableFunction
+    handleChange: CallableFunction,
+    value?: Platform,
 }
 
-function SignupSelectPlatform({handleChange}: Props) {
+function SignupSelectPlatform({handleChange, value}: Props) {
     const platform = new Platforms()
-    const [selectedPlatform, setSelectedPlatform] = useState<Platform>()
     return (
-        <CustomSelect title='Platform' selectedOption={selectedPlatform?.name} icon={selectedPlatform?.logo} handleChange={(value: string) => handleChange(value)}>
+        <CustomSelect title='Platform' selectedOption={value?.name} icon={value?.logo}>
             {platform.platforms.map((platform, idx) => (
-                <CustomSelectOption text={platform.name} img={platform.logo} key={idx} handleClick={(value: string) => setSelectedPlatform(platform)}/>
+                <CustomSelectOption text={platform.name} img={platform.logo} key={idx} handleClick={(value: string) => handleChange(platform)}/>
             ))}
         </CustomSelect>
     )

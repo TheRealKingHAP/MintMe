@@ -11,10 +11,16 @@ import { SocialMedia } from '../../src/models/SocialMedia';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWalletModal, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { User } from '../../src/models/User';
+import { Platform } from '../../types/forms/PlatformType';
+import { Country } from '../../types/forms/CountryType';
 
-type Props = {}
+type Props = {
+  loadingCallBack: CallableFunction,
+  finishedCallBack?: CallableFunction,
+  createdUser?: string
+}
 
-function SignupBlock({}: Props) {
+function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
   const {wallet} = useWallet()
   const {setVisible} = useWalletModal();
   const [email, setEmail] = useState<string>('');
@@ -22,8 +28,8 @@ function SignupBlock({}: Props) {
   const [about, setAbout] = useState<string>('');
   const [greetings, setGreetings] = useState<string>('')
   const [profilePic, setProfilePic] = useState<string>('');
-  const [selectedCountry, setSelectedCountry] = useState<string>('')
-  const [selectedPlatform, setSelectedPlatform] = useState<string>('');
+  const [selectedCountry, setSelectedCountry] = useState<Country>()
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform>();
   const [socialMedia, setSocialMedia] = useState<SocialMedia>({facebook:'', instagram:'', twitch:'', twitter:'', youtube:'', tiktok: ''});
   const [formSelectIDX, setFormSelectIDX] = useState<number>(0);
   const [acceptedTC, setAcceptedTC] = useState<boolean>(false);
@@ -39,7 +45,7 @@ function SignupBlock({}: Props) {
           <div id='PersonalInfo' className='space-y-12 mt-5 flex flex-col items-center w-full'>
             <SignupInput title='E-mail' inputType='email' inputValue={email} handleChange={(value: string) => setEmail(value) }/>
             <SignupInput title='Username' inputType='text' inputValue={username} handleChange={(value:string) => setUserName(value)}/>
-            <SignupSelectCountry handleChange={(value:string) => setSelectedCountry(value)} />
+            <SignupSelectCountry value={selectedCountry} handleChange={(value:Country) => setSelectedCountry(value)} />
           </div>
         )
       case 1:
@@ -48,7 +54,7 @@ function SignupBlock({}: Props) {
             <SignupImageInput username={username} handleChange={(value: string) => setProfilePic(value)} />
             <SignupInput title='Greetings!' inputType='text' inputValue={greetings} handleChange={(value: string) => setGreetings(value)} />
             <SignupTextAreaInput title='About' inputValue={about} handleChange={(value: string) => setAbout(value)} className={'border-2 border-gray-300 rounded-3xl p-2 h-28 w-full focus:border-violet-400 outline-none resize-none'}/>
-            <SignupSelectPlatform handleChange={(value:string) => setSelectedPlatform(value)}/>
+            <SignupSelectPlatform value={selectedPlatform} handleChange={(value:Platform) => setSelectedPlatform(value)}/>
           </div>
         )
       case 2:
@@ -128,6 +134,7 @@ function SignupBlock({}: Props) {
   }
   async function handleSubmit (e: React.FormEvent<HTMLFormElement>){
     e.preventDefault();
+    loadingCallBack(true)
     console.log('E-mail: ' + email);
     console.log('Username: ' + username);
     console.log('Country: ' + selectedCountry);
@@ -136,12 +143,12 @@ function SignupBlock({}: Props) {
     console.log('Social Media:' + JSON.stringify(socialMedia));
     let user: User = {
       email: email,
-      country: selectedCountry,
+      country: selectedCountry?.name || '',
       username: username,
       profile_pic: profilePic,
       public: {
         banner_img: '',
-        main_platform: selectedPlatform,
+        main_platform: selectedPlatform?.name || '',
         public_wallet: wallet?.adapter.publicKey || '',
         feed: {
           bio: {
@@ -162,6 +169,10 @@ function SignupBlock({}: Props) {
         body: JSON.stringify(user)
         }
       )
+      loadingCallBack(false)
+      if(finishedCallBack){
+        finishedCallBack(true, username)
+      }
     }
     return
   }

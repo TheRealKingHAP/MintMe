@@ -5,22 +5,22 @@ import CustomSelect from './Select/CustomSelect'
 import CustomSelectOption from './Select/CustomSelectOption'
 
 type Props = {
-    handleChange?: CallableFunction
+    handleChange?: CallableFunction,
+    value?: Country
 }
 
-function SignupSelectCountry({handleChange}: Props) {
+function SignupSelectCountry({handleChange, value}: Props) {
     const countries = new Countries();
-    const [selectedCountry, setSelectedCountry] = useState<Country>();
-    const handleSelected = (value: string) => {
+    const handleSelected = (value: Country) => {
         if(handleChange) {
             handleChange(value)
         }
         return
     }
     return (
-        <CustomSelect title='Country' selectedOption={selectedCountry?.name} handleChange={(value: string) => handleSelected(value)}>
+        <CustomSelect title='Country' selectedOption={value?.name} >
             {countries.countries.map((country, idx) => (
-                <CustomSelectOption text={country.name} key={idx} handleClick={() => setSelectedCountry(country)} />
+                <CustomSelectOption text={country.name} key={idx} handleClick={() => handleSelected(country)} />
             ))}
         </CustomSelect>
     )

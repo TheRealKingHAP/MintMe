@@ -5,11 +5,18 @@ import { User } from '../../../src/models/User';
 import clientPromise from '../../../src/services/database.service';
 import { v2 as cloudinary } from 'cloudinary'
 
+
 const {MONGODB_DB, DONATION_COLLECTION_NAME, USER_COLLECTION_NAME} = process.env;
 type Error = {
   error: string | unknown  
 }
-
+export const config = {
+  api: {
+      bodyParser: {
+          sizeLimit: '5mb' // Set desired value here
+      }
+  }
+}
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<string | Error>
@@ -21,11 +28,12 @@ export default async function handler(
             let profilepic: string = ''
             const client: MongoClient = await clientPromise
             const db: Db = client.db(MONGODB_DB)
-            const collection: Collection = db.collection(USER_COLLECTION_NAME ?? '')
+            const collection: Collection = db.collection(USER_COLLECTION_NAME ?? '') 
             const uploadImage = await cloudinary.uploader.upload(
                 user.profile_pic, 
                 {
                     folder: `MintMe/${user.username}`,
+                    format: 'jpg',
                     
                 }
             )

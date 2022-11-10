@@ -48,12 +48,18 @@ function UserPage() {
   }, [router.isReady])
   return (
     <div className='h-max pb-12 space-y-12  flex flex-col items-center'>
-      {user && <UserBanner username={user.username} profile_pic={user.profile_pic} banner_img={user.public.banner_img} social_media={user.public.social_media} />}
-      {!user && <SkeletonUserBanner />}
+      {user ? 
+        <UserBanner username={user.username} profile_pic={user.profile_pic} banner_img={user.public.banner_img} social_media={user.public.social_media} />
+      : 
+        <SkeletonUserBanner />
+      }
       <div id='Feed' className='w-3/4 h-max flex flex-col space-y-5 lg:space-y-0 lg:flex-row lg:space-x-10'>
         <div id='' className='flex-1 space-y-10'>
-          {user && <FeedBio title={user.public.feed.bio.title} description={user.public.feed.bio.description} thumbnail={user.public.feed.bio.thumbnail}/>}
-          {!user && <SkeletonUserFeed />}
+          {user ? 
+            <FeedBio title={user.public.feed.bio.title} description={user.public.feed.bio.description} thumbnail={user.public.feed.bio.thumbnail}/>
+          : 
+            <SkeletonUserFeed />
+          }
           <div className='space-y-5'>
           {(donations.length > 0 && !donationsLoading) ? <DonationBlock donations={donations}/> : null}
           {donationsLoading && <SkeletonDonationBlock />}
@@ -61,8 +67,11 @@ function UserPage() {
           </div>
         </div>
         <div id='' className='flex-1'>
-          {user && <DonateForm username={user.username} user_wallet={user.public.public_wallet} />}
-          {!user && <SkeletonDonationForm />}
+          {user ? 
+            <DonateForm username={user.username} user_wallet={user.public.public_wallet} />
+          :
+            <SkeletonDonationForm />
+          }
         </div>
       </div>
     </div>
