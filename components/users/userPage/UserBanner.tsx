@@ -23,7 +23,7 @@ function UserBanner({username, profile_pic, banner_img, social_media } : UserBan
         }
         <div id='profilePic' className='w-max border-2 border-violet-500 rounded-full absolute -bottom-16'>
             <div className='relative h-32 w-32 bg-amber-400 rounded-full'>
-            <Image src={profile_pic} layout={'fill'} objectFit={'contain'} className='rounded-full' />
+            <Image src={profile_pic} layout={'fill'} objectFit={'cover'} className='rounded-full' />
             </div>
         </div>
         </div>

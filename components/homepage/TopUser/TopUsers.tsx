@@ -24,9 +24,9 @@ function TopUsers({}: Props) {
   }, [])
   
   return (
-    <div id='section-2' className=' w-3/4 h-max space-y-28 2xl:h-screen  flex flex-col items-center'>
+    <div id='section-2' className=' w-3/4 h-max  2xl:h-screen  flex flex-col items-center'>
         <h3 className='font-bold text-gray-800 text-lg text-center xl:w-1/2  xl:text-xl 2xl:text-4xl'>Look who is using our platform to receive donations via crypto</h3>
-        <div className='w-full flex flex-col space-y-12 2xl:space-y-0 2xl:flex-row 2xl:justify-between items-center 2xl:items-start'>
+        <div className='w-full flex flex-col space-y-12 2xl:space-y-0 2xl:flex-row 2xl:justify-between items-center 2xl:items-start mt-28 landscape:2xl:mt-40'>
           {users && users?.map((user, index) => (
             <Link href={`./user/${user.username}`} key={index}>
               <a>

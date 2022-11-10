@@ -30,7 +30,7 @@ const Home: NextPage = () => {
         <div className='w-full flex flex-col items-center p-5  h-screen landscape:h-max landscape:2xl:h-screen'>
           <p className='text-gray-600 text-lg lg:text-xl 2xl:text-2xl'>¿Why MintMe?</p>
           <h4 className='mt-16 w-3/4 2xl:w-1/2 text-center font-bold text-gray-800 text-lg lg:text-xl 2xl:text-4xl'>Extraordinary donations for extraordinary creators!</h4>
-          <p className='mt-16 w-3/4 2xl:w-1/2 text-center font-medium text-gray-700 xl:text-lg 2xl:text-2xl'>With MintMe you are not only receiving money, you are getting a much valuable asset, you will recieve <strong>Solana</strong>, one of the most used and beloved coin in the cryptomarket right now.</p>
+          <p className='mt-16 w-3/4 2xl:w-1/2 text-center font-medium text-gray-500 xl:text-lg 2xl:text-2xl'>With MintMe you are not only receiving money, you are getting a much valuable asset, you will recieve <strong>Solana</strong>, one of the most used and beloved coin in the cryptomarket right now.</p>
           <CryptoChartBlock />
         </div>
       </main>

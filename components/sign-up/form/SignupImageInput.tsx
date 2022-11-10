@@ -42,7 +42,7 @@ function SignupImageInput({handleChange, username}: Props) {
     return (
         <div className='text-center'>
             <div className='relative h-36 w-36 rounded-full'>
-                {avatar ? <Image src={avatar} layout='fill' objectFit='contain' className='rounded-full' />
+                {avatar ? <Image src={avatar} layout='fill' objectFit='cover' className='rounded-full' />
                 :
                 <div className='h-full w-full bg-gray-400 rounded-full'>
                 </div>
