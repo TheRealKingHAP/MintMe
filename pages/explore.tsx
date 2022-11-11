@@ -10,7 +10,7 @@ const Explore = () => {
     const [users, setUsers] = useState<User[]>([])
     const [selectedCountry, setSelectedCountry] = useState('');
     //Filter the user countries and remove the duplicated ones
-    const userCountries: string[] = users.map((m) => m.country);
+    const userCountries: string[] = users.map((m) => m.country.name);
     const result: string[] = Array.from(new Set(userCountries));
     //Handle the select element when option is changed
     const handleChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
@@ -18,7 +18,7 @@ const Explore = () => {
     }
     //Filter the array of users by country
     const filteredUsers: User[] = users.filter((a) => {
-        return a.country == selectedCountry;
+        return a.country.name == selectedCountry;
     })
     //Fetch the list of users from api
     const getUsers = async () => {
@@ -29,7 +29,7 @@ const Explore = () => {
         .catch(err => console.log(err.message))
         if(userList.length > 0) {
             setUsers(userList);
-            setSelectedCountry(userList[0].country)
+            setSelectedCountry(userList[0].country.name)
         }
         return
     }
@@ -52,7 +52,7 @@ const Explore = () => {
                     {users.length > 0 ? filteredUsers.map((user: User, index) => (
                         <Link href={'/user/'+user.username} key={index}>
                             <a>
-                            <UserCard id={user.id} username={user.username} country={user.country} email={user.email} profile_pic={user.profile_pic} public={user.public} />
+                            <UserCard username={user.username} country={user.country} email={user.email} profile_pic={user.profile_pic} public={user.public} />
                             </a>
                         </Link>
                         

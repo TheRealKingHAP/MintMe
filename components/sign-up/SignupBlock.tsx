@@ -19,18 +19,50 @@ type Props = {
   finishedCallBack?: CallableFunction,
   createdUser?: string
 }
-
 function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
+  const [data, setData] = useState<User>({
+    email: '',
+    country: {name: '', code: ''},
+    username: '',
+    profile_pic: '',
+    public: {
+      banner_img: '',
+      main_platform: {name: '', logo: '', base_url: ''},
+      public_wallet: '',
+      feed: {
+        bio: {
+          title: '',
+          introduction: '',
+          description: '',
+          thumbnail: '',
+        }
+      },
+      social_media: {
+        facebook: '',
+        instagram: '',
+        tiktok: '',
+        twitch: '',
+        twitter: '',
+        youtube: ''
+      }
+    }
+  })
+  const changeBioData = (key: 'title' | 'description' | 'thumbnail' | 'introduction',value: string) => {
+    return {
+      ...data,
+      public: {
+        ...data.public,
+        feed: {
+          bio: {
+            ...data.public.feed.bio, 
+            [key]: value
+          }
+        }
+      }
+    }
+  }
   const {wallet} = useWallet()
   const {setVisible} = useWalletModal();
-  const [email, setEmail] = useState<string>('');
-  const [username, setUserName] = useState<string>('');
-  const [about, setAbout] = useState<string>('');
-  const [greetings, setGreetings] = useState<string>('')
-  const [profilePic, setProfilePic] = useState<string>('');
-  const [selectedCountry, setSelectedCountry] = useState<Country>()
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform>();
-  const [socialMedia, setSocialMedia] = useState<SocialMedia>({facebook:'', instagram:'', twitch:'', twitter:'', youtube:'', tiktok: ''});
   const [formSelectIDX, setFormSelectIDX] = useState<number>(0);
   const [acceptedTC, setAcceptedTC] = useState<boolean>(false);
   const platform = new Platforms()
@@ -43,18 +75,18 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
       case 0:
         return (
           <div id='PersonalInfo' className='space-y-12 mt-5 flex flex-col items-center w-full'>
-            <SignupInput title='E-mail' inputType='email' inputValue={email} handleChange={(value: string) => setEmail(value) }/>
-            <SignupInput title='Username' inputType='text' inputValue={username} handleChange={(value:string) => setUserName(value)}/>
-            <SignupSelectCountry value={selectedCountry} handleChange={(value:Country) => setSelectedCountry(value)} />
+            <SignupInput title='E-mail' inputType='email' inputValue={data.email} handleChange={(value: string) => setData({...data, email: value}) }/>
+            <SignupInput title='Username' inputType='text' inputValue={data.username} handleChange={(value:string) => setData({...data, username: value})}/>
+            <SignupSelectCountry value={data.country} handleChange={(value:Country) => setData({...data, country: value})} />
           </div>
         )
       case 1:
         return (
           <div id='Bio' className='space-y-12 flex flex-col mt-5 items-center w-full'>
-            <SignupImageInput username={username} handleChange={(value: string) => setProfilePic(value)} />
-            <SignupInput title='Greetings!' inputType='text' inputValue={greetings} handleChange={(value: string) => setGreetings(value)} />
-            <SignupTextAreaInput title='About' inputValue={about} handleChange={(value: string) => setAbout(value)} className={'border-2 border-gray-300 rounded-3xl p-2 h-28 w-full focus:border-violet-400 outline-none resize-none'}/>
-            <SignupSelectPlatform value={selectedPlatform} handleChange={(value:Platform) => setSelectedPlatform(value)}/>
+            <SignupImageInput username={data.username} handleChange={(value: string) => setData({...data, profile_pic: value})} />
+            <SignupInput title='Greetings!' inputType='text' inputValue={data.public.feed.bio.introduction} handleChange={(value: string) => setData(changeBioData('introduction', value))} />
+            <SignupTextAreaInput title='About' inputValue={data.public.feed.bio.description} handleChange={(value: string) => setData(changeBioData('description', value))} className={'border-2 border-gray-300 rounded-3xl p-2 h-28 w-full focus:border-violet-400 outline-none resize-none'}/>
+            <SignupSelectPlatform value={data.public.main_platform} handleChange={(value:Platform) => setData({...data, public:{...data.public, main_platform: value}})}/>
           </div>
         )
       case 2:
@@ -63,7 +95,7 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
             {platform.platforms.map((platform, idx) => (
               <div className='flex items-center space-x-5' key={idx}>
                 <Image src={platform.logo} height={42} width={42}/>
-                <SignupInput title={platform.name} inputType='text' inputValue={socialMedia[platform.name.toLowerCase() as keyof SocialMedia]} handleChange={(value:string) => setSocialMedia(socialMedia => ({...socialMedia, [platform.name.toLowerCase()]:value}))} />
+                <SignupInput title={platform.name} inputType='text' inputValue={data.public.social_media[platform.name.toLowerCase() as keyof SocialMedia]} handleChange={(value:string) => setData({...data, public:{...data.public, social_media:{...data.public.social_media, [platform.name.toLowerCase()]: value}}})} />
               </div>
             ))}
           </div>
@@ -135,35 +167,15 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
   async function handleSubmit (e: React.FormEvent<HTMLFormElement>){
     e.preventDefault();
     loadingCallBack(true)
-    console.log('E-mail: ' + email);
-    console.log('Username: ' + username);
-    console.log('Country: ' + selectedCountry);
-    console.log('Description: ' + about);
-    console.log('Platform: ' + selectedPlatform);
-    console.log('Social Media:' + JSON.stringify(socialMedia));
     let user: User = {
-      email: email,
-      country: selectedCountry?.name || '',
-      username: username,
-      profile_pic: profilePic,
+      ...data, 
       public: {
-        banner_img: '',
-        main_platform: selectedPlatform?.name || '',
-        public_wallet: wallet?.adapter.publicKey || '',
-        feed: {
-          bio: {
-            title: '',
-            introduction: greetings,
-            description: about,
-            thumbnail: '',
-          }
-        },
-        social_media: {
-          ...socialMedia
-        }
+        ...data.public, 
+        public_wallet: wallet?.adapter.publicKey || ''
       }
     }
     if(acceptedTC){
+      console.log(user)
       const res = await fetch('http://localhost:3000/api/users/addUser',
         {method: 'POST',
         body: JSON.stringify(user)
@@ -171,7 +183,7 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
       )
       loadingCallBack(false)
       if(finishedCallBack){
-        finishedCallBack(true, username)
+        finishedCallBack(true, data.username)
       }
     }
     return

@@ -30,7 +30,7 @@ function TopUsers({}: Props) {
           {users && users?.map((user, index) => (
             <Link href={`./user/${user.username}`} key={index}>
               <a>
-                <TopUserCard key={index} username={user.username} img={user.profile_pic} mainplatform={user.public.main_platform} introduction={user.public.feed.bio.introduction}/>
+                <TopUserCard key={index} username={user.username} img={user.profile_pic} mainplatform={user.public.main_platform.name} introduction={user.public.feed.bio.introduction}/>
               </a>
             </Link>
           ))}

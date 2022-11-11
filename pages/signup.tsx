@@ -12,7 +12,6 @@ function SignUp({}: Props) {
   const router = useRouter()
   const handleFinishSignup = (isFinished: boolean, user: string) => {
     setSignUpFinished(isFinished);
-    console.log(user)
     router.push(`/user/${user}`)
   }
   return (
