@@ -34,7 +34,7 @@ export default async function handler(
                 {
                     folder: `MintMe/${user.username}`,
                     format: 'jpg',
-                    
+                    transformation: {width: 200}
                 }
             )
             .then(

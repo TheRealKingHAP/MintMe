@@ -11,6 +11,7 @@ interface UserBannerType{
 }
 
 function UserBanner({username, profile_pic, banner_img, social_media } : UserBannerType) {
+  
   const platform = new Platforms()
   return (
     <div className='w-full flex flex-col justify-center items-center space-y-10'>

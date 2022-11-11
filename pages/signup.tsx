@@ -17,7 +17,7 @@ function SignUp({}: Props) {
   }
   return (
     <div className='flex flex-col  w-full justify-start items-center landscape:2xl:h-[calc(100vh-96px)]'>
-      {isLoading ?
+      {isLoading || signUpFinished ?
         <div className='w-full h-[calc(100vh-96px)]'>
           <div id='Loading' className={` flex-col justify-center items-center space-y-24 h-full w-full ${!signUpFinished ? 'flex' : 'hidden'}`}>
             <div className='text-center'>
