@@ -18,6 +18,7 @@ export const config = {
       }
   }
 }
+//Compress the user image downgrading the quality to 85% and converting the file to jpeg
 async function CompressImage(imgBuffer:Buffer) {
   return sharp(imgBuffer).resize({width:500}).toFormat('jpeg').jpeg({quality: 85, force: true}).toBuffer()
 }
@@ -59,19 +60,6 @@ export default async function handler(
               throw new Error("Cannot Upload Image", error);
               
             })
-            /*const uploadImage = await cloudinary.uploader.upload(
-                user.profile_pic, 
-                {
-                    folder: `MintMe/${user.username}`,
-                    format: 'jpg',
-                }
-            )
-            .then(
-              (response) => {
-                user = {...user, profile_pic: response.secure_url}
-              }
-            ).catch((error) => console.log(error))*/
-
             const addUser = await collection.insertOne(user)
             .then((result) => res.status(200).json('Success Signup'))
             .catch((error) => {
