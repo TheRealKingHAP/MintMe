@@ -20,6 +20,10 @@ type Props = {
   createdUser?: string
 }
 function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
+  const {wallet} = useWallet()
+  const {setVisible} = useWalletModal();
+  const [formSelectIDX, setFormSelectIDX] = useState<number>(0);
+  const [acceptedTC, setAcceptedTC] = useState<boolean>(false);
   const [data, setData] = useState<User>({
     email: '',
     country: {name: '', code: ''},
@@ -61,10 +65,6 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
       }
     }
   }
-  const {wallet} = useWallet()
-  const {setVisible} = useWalletModal();
-  const [formSelectIDX, setFormSelectIDX] = useState<number>(0);
-  const [acceptedTC, setAcceptedTC] = useState<boolean>(false);
   const platform = new Platforms()
   const onRequestConnectWallet = () => {
     setVisible(true);
@@ -83,7 +83,7 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
       case 1:
         return (
           <div id='Bio' className='space-y-12 flex flex-col mt-5 items-center w-full'>
-            <SignupImageInput username={data.username} handleChange={(value: string) => setData({...data, profile_pic: value})} />
+            <SignupImageInput image={data.profile_pic} username={data.username} handleChange={(value: string) => setData({...data, profile_pic: value})} />
             <SignupInput title='Greetings!' inputType='text' inputValue={data.public.feed.bio.introduction} handleChange={(value: string) => setData(changeBioData('introduction', value))} />
             <SignupTextAreaInput title='About' inputValue={data.public.feed.bio.description} handleChange={(value: string) => setData(changeBioData('description', value))} className={'border-2 border-gray-300 rounded-3xl p-2 h-28 w-full focus:border-violet-400 outline-none resize-none'}/>
             <SignupSelectPlatform value={data.public.main_platform} handleChange={(value:Platform) => setData({...data, public:{...data.public, main_platform: value}})}/>
