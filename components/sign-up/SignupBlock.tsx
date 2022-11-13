@@ -182,6 +182,9 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
         }
       )
       loadingCallBack(false)
+      if(res.status != 200){
+        throw new Error('Sorry something went wrong')
+      }
       if(finishedCallBack){
         finishedCallBack(true, data.username)
       }
