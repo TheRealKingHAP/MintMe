@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@project-serum/sol-wallet-adapter": "^0.2.6",
     "@solana/spl-token": "^0.3.4",
     "@solana/wallet-adapter-base": "^0.9.16",
     "@solana/wallet-adapter-react": "^0.15.18",
@@ -17,6 +18,7 @@
     "@solana/web3.js": "^1.56.2",
     "@tailwindcss/line-clamp": "^0.4.2",
     "@types/sharp": "^0.31.0",
+    "bs58": "^5.0.0",
     "cloudinary": "^1.32.0",
     "dotenv": "^16.0.3",
     "mongodb": "^4.10.0",
@@ -25,7 +27,8 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.4.0",
     "sharp": "^0.31.2",
-    "streamifier": "^0.1.1"
+    "streamifier": "^0.1.1",
+    "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
     "@types/node": "18.7.14",

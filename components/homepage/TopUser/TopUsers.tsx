@@ -11,12 +11,12 @@ function TopUsers({}: Props) {
   const [users, setUsers] = useState<User[]>()
   const getTopUsers = async () => {
     let userList: User[] = []
-    const result = await fetch('http://localhost:3000/api/users')
+    const result = await fetch('http://localhost:3000/api/users?topusers=true')
     .then(res => res.json())
     .then((data: User[]) => userList = data)
     .catch(err => console.log(err.message))
     if(userList.length > 0) {
-      setUsers(userList.slice(0,5))
+      setUsers(userList)
     }
   }
   useEffect(() => {

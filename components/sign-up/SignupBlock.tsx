@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useState } from 'react'
+import React, { useState, useEffect, FC } from 'react'
 import { BsArrowLeft, BsCheck } from 'react-icons/bs'
 import Platforms from '../../constants/platforms';
 import SignupSelectCountry from './form/SignupSelectCountry';
@@ -13,6 +13,7 @@ import { useWalletModal, WalletMultiButton } from '@solana/wallet-adapter-react-
 import { User } from '../../src/models/User';
 import { Platform } from '../../types/forms/PlatformType';
 import { Country } from '../../types/forms/CountryType';
+import {sign} from 'tweetnacl';
 
 type Props = {
   loadingCallBack: CallableFunction,
@@ -20,7 +21,7 @@ type Props = {
   createdUser?: string
 }
 function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
-  const {wallet} = useWallet()
+  const {wallet, publicKey, signMessage} = useWallet()
   const {setVisible} = useWalletModal();
   const [formSelectIDX, setFormSelectIDX] = useState<number>(0);
   const [acceptedTC, setAcceptedTC] = useState<boolean>(false);
@@ -51,6 +52,19 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
       }
     }
   })
+  const handleSign = async () =>{
+    try {
+      if(!publicKey) throw new Error('Wallet not connected')
+      if(!signMessage) throw new Error('Wallet does not support message siging!')
+      const message = new TextEncoder().encode('Please sign this message to complete sign up');
+      const signature = await signMessage(message);
+      const provider = wallet?.adapter.name
+      if(!sign.detached.verify(message, signature, publicKey.toBytes())) throw new Error('Invalid signature!');
+      return {signature, publicKey, provider}
+    } catch (error: any) {
+      throw new Error('Signing message failed' + error.message)
+    }
+  }
   const changeBioData = (key: 'title' | 'description' | 'thumbnail' | 'introduction',value: string) => {
     return {
       ...data,
@@ -166,6 +180,7 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
   }
   async function handleSubmit (e: React.FormEvent<HTMLFormElement>){
     e.preventDefault();
+    let signedMessage = await handleSign()
     loadingCallBack(true)
     let user: User = {
       ...data, 
@@ -174,11 +189,11 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
         public_wallet: wallet?.adapter.publicKey || ''
       }
     }
-    if(acceptedTC){
+    if(acceptedTC && signedMessage){
       console.log(user)
       const res = await fetch('http://localhost:3000/api/users/addUser',
         {method: 'POST',
-        body: JSON.stringify(user)
+        body: JSON.stringify({user, signedMessage})
         }
       )
       loadingCallBack(false)
@@ -205,7 +220,7 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
             renderSelectedForm(formSelectIDX)
           }
           {
-          wallet?.adapter.connected ? 
+          wallet?.adapter.connected && acceptedTC ? 
             <button type={'submit'} className={`p-2 mt-24 w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === formsLength ? 'block' : 'hidden'} `}>{'Sign up'}</button>
           :
             null

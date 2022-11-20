@@ -8,6 +8,7 @@ import {FaDonate} from 'react-icons/fa';
 import Link from 'next/link';
 import { Router, useRouter } from 'next/router';
 import Image from 'next/image';
+import ShortenString from '../../src/utils/ShortenString';
 
 interface Props {
   className?: string
@@ -24,6 +25,12 @@ function NavBar({className}: Props) {
     //Redirect to main page if the wallet is already connected
     const redirectProfile = () => {
       router.push('/');
+    }
+    const handleDisconnect = () => {
+      if(!wallet){
+        throw new Error('There is no wallet connected');
+      };
+      wallet.adapter.disconnect()
     }
   return (
     <div className={`${ isActive ? 'max-h-72' : 'max-h-20'}  bg-white flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-5 lg:space-y-0 px-5 py-5 lg:p-12 w-full lg:h-[72px]  shadow-sm transition-all transform ease-in-out duration-300 z-20 relative ${className}`}>
@@ -45,8 +52,14 @@ function NavBar({className}: Props) {
           {!wallet?.adapter.connected ? 
           <li><NavBarElement label='Log in' onClickFunction={!wallet ? onRequestConnectWallet : redirectProfile}/></li>
           :
-          <li>
-            <WalletMultiButton />
+          <li className=''>
+            <div className='hidden lg:block'>
+              <WalletMultiButton />
+            </div>
+            <div className='lg:hidden flex space-x-5 items-center'>
+              <p className='text-violet-500'>{ShortenString(wallet.adapter.publicKey?.toBase58(), 4)}</p>
+              <button type='button' className='font-medium text-white bg-violet-500 rounded-xl p-2' onClick={handleDisconnect}>Disconnect</button>
+            </div>
           </li>
           }
           {!wallet?.adapter.connected && <Link href={'/signup'}><a className='bg-violet-500 rounded-3xl w-24 text-center p-2 text-white font-semibold'><li>Sign up</li></a></Link>}

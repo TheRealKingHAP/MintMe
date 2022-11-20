@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import React, {useState, useEffect} from 'react'
-import FormatInt from '../../../src/functions/FormatInt';
+import FormatInt from '../../../src/utils/FormatInt';
 import { CoinMarketData } from '../../../types/coingecko/CoinMarketDataType';
 
 type Props = {}

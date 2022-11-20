@@ -7,9 +7,20 @@ import { UploadApiErrorResponse, UploadApiResponse, v2 as cloudinary } from 'clo
 import sharp from 'sharp';
 import streamifier from 'streamifier'
 import {Connection, PublicKey, clusterApiUrl} from '@solana/web3.js'
+import { SignedMessage } from '../../../src/models/SignedMessage';
+import nacl from 'tweetnacl';
+import base58 from 'bs58';
 
 type Error = {
   error: string | unknown  
+}
+type ReqData = {
+  user: User,
+  signedMessage: {
+    signature: any,
+    provider: string,
+    publicKey: string
+  },
 }
 export const config = {
   api: {
@@ -22,6 +33,20 @@ export const config = {
 async function CompressImage(imgBuffer:Buffer) {
   return sharp(imgBuffer).resize({width:500}).toFormat('jpeg').jpeg({quality: 85, force: true}).toBuffer()
 }
+function VerifySign (message: Uint8Array, signature: Uint8Array, publicKey: Uint8Array) {
+  const verified = nacl.sign.detached.verify(message, signature, publicKey)
+  return verified
+}
+function convertToUint8Array (provider: string, signature: any) {
+  switch(provider) {
+    case 'Solflare':
+      return Uint8Array.from(Object.values(signature))
+    case 'Phantom':
+      return Uint8Array.from(signature.data)
+    default:
+      return Uint8Array.from(Object.values(signature))
+  }
+}
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<string | Error | Object>
@@ -29,20 +54,18 @@ export default async function handler(
   switch(req.method) {
     case 'POST':
     try{
-      let user: User = JSON.parse(req.body);
-      let pubKey: PublicKey = new PublicKey(user.public.public_wallet)
-      const walletConnection = await new Connection(clusterApiUrl('devnet')).getAccountInfo(pubKey)
-      .then((value) => {
-        if(!value){
-          throw 'No valid wallet connected'
-        }
-        return value
-      }).catch((error) => {
-        return null
-      })
-      if(!walletConnection){
-        throw 'No valid wallet connected'
+      const message = new TextEncoder().encode('Please sign this message to complete sign up');
+      let data: ReqData = JSON.parse(req.body);
+      let user: User = data.user
+      let signedMessage = data.signedMessage
+      let publicKey = new PublicKey(signedMessage.publicKey)
+      //Convert signature passed from Client to Uint8Array and Verify the sign
+      let signature: Uint8Array = convertToUint8Array(signedMessage.provider, signedMessage.signature);
+      let verified = VerifySign(message, signature, publicKey.toBytes());
+      if(!verified){
+        throw 'Cannot verified the sign'
       }
+      console.log(verified)
       let profilepic: string = user.profile_pic.split(';base64,').pop() || ''
       let imgBuffer: Buffer = Buffer.from(profilepic, 'base64');
       const client: MongoClient = await clientPromise
@@ -79,52 +102,9 @@ export default async function handler(
         throw "Cannot signup user to database"
         
       })
-    }catch (error){
-      res.status(400).json({error})
-    }
-    
-      /*try{
-          let user: User = JSON.parse(req.body)
-          let profilepic: string = user.profile_pic.split(';base64,').pop() || ''
-          let imgBuffer: Buffer = Buffer.from(profilepic, 'base64');
-          const client: MongoClient = await clientPromise
-          const db: Db = client.db(process.env.MONGODB_DB)
-          const collection: Collection = db.collection(process.env.USER_COLLECTION_NAME ?? '') 
-          const compressedImage: Buffer = await CompressImage(imgBuffer);
-          const uploadFromBuffer = (image: Buffer) => {
-            return new Promise<UploadApiResponse | UploadApiErrorResponse>((resolve, reject) => {
-              let cloudinary_upload_stream = cloudinary.uploader.upload_stream(
-                {
-                  folder: `MintMe/${user.username}`,
-                },
-                (error, result) => {
-                  if(result){
-                    resolve(result);
-                  }else{
-                    reject(error)
-                  }
-                }
-              );
-              streamifier.createReadStream(image).pipe(cloudinary_upload_stream);
-            });
-          };
-          let result= await uploadFromBuffer(compressedImage)
-          .then((data) => {
-            user = {...user, profile_pic: data.secure_url}
-          }).catch((error) => {
-            throw new Error("Cannot Upload Image", error);
-            
-          })
-          const addUser = await collection.insertOne(user)
-          .then((result) => res.status(200).json('Success Signup'))
-          .catch((error) => {
-            throw new Error("Cannot signup user to database", error);
-            
-          })
-      } catch (error){
-          res.status(400).json({error})
-      }*/
-      
+    }catch (error: any){
+      res.status(400).json(error.message)
+    }      
       break;
     default:
         res.status(400).send({error: 'Sorry there was an error'});

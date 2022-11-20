@@ -6,6 +6,7 @@
   --background-gray-light: #d1d5db;
   --background-gray-dark: #d1d5db;
   --primary-color: #8b5cf6;
+  --text-gray-color: #52525b;
 }
 
 body::-webkit-scrollbar{
@@ -122,6 +123,7 @@ body {
   animation-delay: -0.3s;
   background-color: #ec4899;
 }
+
 @keyframes animateLoaderElement {
   0%{
     transform: scale(0);
