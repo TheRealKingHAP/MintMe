@@ -16,9 +16,9 @@ function TopUserCard({username, img, mainplatform, introduction}: UserCardProps)
             <Image src={img} layout='fill' objectFit='cover' className='transition-none 2xl:hover:scale-125  2xl:transition 2xl:ease-in-out 2xl:duration-700 rounded-md' />
         </div>
         <div className='h-16'>
-        <p className='font-normal text-gray-500 line-clamp-2'> <strong className='text-gray-800'>{username}</strong> {introduction}</p>
+        <p className='font-normal text-gray-500 dark:text-gray-300 line-clamp-2'> <strong className='text-gray-800 dark:text-white'>{username}</strong> {introduction}</p>
         </div>
-        <label className='font-medium text-base  text-gray-600'>Platform: <span className={`${mainplatform == 'Twitch' ? 'text-violet-400' : mainplatform == 'Youtube' ? 'text-red-400' : mainplatform == 'Facebook' ? 'text-blue-500' : mainplatform == 'Twitter' ? 'text-sky-400' : 'text-pink-400'}`}>{mainplatform}</span> </label>
+        <label className='font-medium text-base  text-gray-600 dark:text-gray-200'>Platform: <span className={`${mainplatform == 'Twitch' ? 'text-violet-400' : mainplatform == 'Youtube' ? 'text-red-400' : mainplatform == 'Facebook' ? 'text-blue-500' : mainplatform == 'Twitter' ? 'text-sky-400' : 'text-pink-400'}`}>{mainplatform}</span> </label>
 
     </div>
   )

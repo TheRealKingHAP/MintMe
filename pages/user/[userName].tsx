@@ -47,7 +47,7 @@ function UserPage() {
     getData(router.query.userName)
   }, [router.isReady])
   return (
-    <div className='h-max pb-12 space-y-12  flex flex-col items-center'>
+    <div className='h-max pb-12 space-y-12 dark:bg-dark-mode-background-background  flex flex-col items-center'>
       {user ? 
         <UserBanner username={user.username} profile_pic={user.profile_pic} banner_img={user.public.banner_img} social_media={user.public.social_media} />
       : 
@@ -63,7 +63,7 @@ function UserPage() {
           <div className='space-y-5'>
           {(donations.length > 0 && !donationsLoading) ? <DonationBlock donations={donations}/> : null}
           {donationsLoading && <SkeletonDonationBlock />}
-          {(!donationsLoading && donations.length <= 0) ? <div className='font-semibold text-gray-600 text-xl text-center'>No donations</div>: null}
+          {(!donationsLoading && donations.length <= 0) ? <div className='font-semibold text-gray-600 dark:text-gray-200 text-xl text-center'>No donations</div>: null}
           </div>
         </div>
         <div id='' className='flex-1'>

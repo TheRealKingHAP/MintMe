@@ -38,11 +38,11 @@ const Explore = () => {
     }, [])
     return (
         <div className='h-max flex flex-col justify-center items-center pt-[72px] space-y-20'>
-            <h2 className='mt-20 text-lg lg:text-xl xl:text-2xl 2xl:text-3xl  w-3/4 lg:w-max text-center text-gray-800 font-bold'>Checkout the streamers working with us</h2>
+            <h2 className='mt-20 text-lg lg:text-xl xl:text-2xl 2xl:text-3xl  w-3/4 lg:w-max text-center text-gray-800 dark:text-white font-bold'>Checkout the streamers working with us</h2>
             <div className=' w-3/4 flex flex-col items-center lg:items-start space-y-10'>
                 <form>
-                    <label className='font-semibold text-gray-800'>Filter by country: </label>
-                    <select name='countryFilter' className='w-max border-green-300 border-2 rounded-lg outline-none' value={selectedCountry} onChange={handleChange}>
+                    <label className='font-semibold text-gray-800 dark:text-white'>Filter by country: </label>
+                    <select name='countryFilter' className='w-max border-violet-500 bg-white dark:bg-dark-mode-background-hover-color border-2 rounded-lg outline-none' value={selectedCountry} onChange={handleChange}>
                         {result.map((item, index) => (
                             <option value={item} key={index}>{item}</option>
                         ))}

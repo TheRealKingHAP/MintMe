@@ -54,7 +54,8 @@ export default async function handler(
   switch(req.method) {
     case 'POST':
     try{
-      const message = new TextEncoder().encode('Please sign this message to complete sign up');
+      //message does not match the client side message this is for testing purposes only
+      const message = new TextEncoder().encode('Please sign 2 this message to complete sign up');
       let data: ReqData = JSON.parse(req.body);
       let user: User = data.user
       let signedMessage = data.signedMessage
@@ -70,7 +71,17 @@ export default async function handler(
       let imgBuffer: Buffer = Buffer.from(profilepic, 'base64');
       const client: MongoClient = await clientPromise
       const db: Db = client.db(process.env.MONGODB_DB)
-      const collection: Collection = db.collection(process.env.USER_COLLECTION_NAME ?? '') 
+      const collection: Collection = db.collection(process.env.USER_COLLECTION_NAME ?? '')
+      const verifyUserAviability: User = (await collection.findOne({"$or":[
+        {"username": data.user.username},
+        {"email": data.user.email}
+      ]})) as User
+      if (verifyUserAviability.username == data.user.username){
+        throw 'Sorry the username is already in use'
+      }
+      if(verifyUserAviability.email == data.user.email) {
+        throw 'Sorry the email is already in use'
+      }
       const compressedImage: Buffer = await CompressImage(imgBuffer);
       const uploadFromBuffer = (image: Buffer) => {
         return new Promise<UploadApiResponse | UploadApiErrorResponse>((resolve, reject) => {
@@ -103,7 +114,8 @@ export default async function handler(
         
       })
     }catch (error: any){
-      res.status(400).json(error.message)
+      console.log(error)
+      res.status(400).send(error)
     }      
       break;
     default:

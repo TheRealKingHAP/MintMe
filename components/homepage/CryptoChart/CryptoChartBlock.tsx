@@ -29,11 +29,11 @@ function CryptoChartBlock({}: Props) {
             <Image src={'/icons/solana-bg-black.webp'} layout='fill' objectFit='cover' className='rounded-full' />
           </div>
         </div>
-        <p className='font-bold text-gray-700 mt-5 landscape:2xl:text-xl'>Solana (SOL)</p>
+        <p className='font-bold text-gray-700 dark:text-gray-50 mt-5 landscape:2xl:text-xl'>Solana (SOL)</p>
       </div>
       <div className=' flex flex-col justify-center items-center'>
-        <h4 className='font-bold text-gray-700 landscape:2xl:text-xl'>Trading Volume</h4>
-        {coinData && <p className='font-medium text-gray-600 landscape:2xl:text-2xl mt-16'>{FormatInt({value: coinData.total_volume, currency:'USD', notation:'compact', style:'currency'})}</p>}
+        <h4 className='font-bold text-gray-700 dark:text-gray-50 landscape:2xl:text-xl'>Trading Volume</h4>
+        {coinData && <p className='font-medium text-gray-600 dark:text-gray-200 landscape:2xl:text-2xl mt-16'>{FormatInt({value: coinData.total_volume, currency:'USD', notation:'compact', style:'currency'})}</p>}
       </div>
 
     </div>

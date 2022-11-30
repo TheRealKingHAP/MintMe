@@ -7,6 +7,8 @@
   --background-gray-dark: #d1d5db;
   --primary-color: #8b5cf6;
   --text-gray-color: #52525b;
+  --darkmode-background-color: #18191A;
+  --darkmode-elevation1-color: #242526;
 }
 
 body::-webkit-scrollbar{
@@ -134,4 +136,26 @@ body {
   50%,100%{
     transform: scale(0);
   }
+}
+
+@media (prefers-color-scheme: dark) {
+  body{
+    background-color: var(--darkmode-background-color);
+    color: white;
+  }
+  #DonationListScroll::-webkit-scrollbar-track{
+    background-color: transparent ;
+  }
+  #DonationListScroll::-webkit-scrollbar-thumb{
+    background-color: var(--darkmode-elevation1-color);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track{
+    background-color: transparent ;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb{
+    background-color: var(--darkmode-elevation1-color);
+    border-radius: 10px;
+  }
+  
 }

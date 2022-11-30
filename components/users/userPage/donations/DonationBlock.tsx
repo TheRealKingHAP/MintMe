@@ -22,12 +22,12 @@ function DonationBlock({donations}: {donations: Donation[]}) {
     }
   })
   return (
-    <div className='flex flex-col h-[30rem] border-2 rounded-md border-gray-200 p-5  space-y-5'>
+    <div className='flex flex-col h-[30rem] border-2 rounded-md border-gray-200 dark:border-transparent dark:bg-dark-mode-background-card-color p-5  space-y-5'>
         <div className='flex items-center justify-between space-x-5'>
-        <p className='font-bold text-gray-700 text-base lg:text-lg xl:text-xl 2xl:text-2xl'>Top donations</p>
+        <p className='font-bold text-gray-700 dark:text-gray-50 text-base lg:text-lg xl:text-xl 2xl:text-2xl'>Top donations</p>
         <form className='flex'>
-          <label className='font-semibold text-gray-600 hidden lg:block'>Order by:</label>
-          <select value={orderBy} onChange={handleChange} className='w-max lg:ml-2 border-violet-500 border-2 rounded-lg outline-none' >
+          <label className='font-semibold text-gray-600 dark:text-gray-200 hidden lg:block'>Order by:</label>
+          <select value={orderBy} onChange={handleChange} className='w-max lg:ml-2 dark:bg-dark-mode-background-hover-color border-violet-500 border-2 rounded-lg outline-none' >
             <option value={'amount_highest'}>Highest donation</option>
             <option value={'amount_lowest'}>Lowest donation</option>
             <option value="date_newest">Date (newest)</option>
@@ -41,7 +41,7 @@ function DonationBlock({donations}: {donations: Donation[]}) {
             <DonationTile id={donation.id} sender={donation.sender} receiver={donation.receiver} amount={donation.amount} date={donation.date} key={index}/>
         ))
         :
-        <p className='font-semibold text-gray-700 text-base lg:text-lg xl:text-xl'>No donations</p>
+        <p className='font-semibold text-gray-700 dark:text-gray-50 text-base lg:text-lg xl:text-xl'>No donations</p>
         }
         </div>
     </div>

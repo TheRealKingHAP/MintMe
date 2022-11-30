@@ -17,7 +17,7 @@ function CustomSelectOption({text, img, handleClick}:CustomSelectOption) {
         return
     }
     return (
-        <div className='flex items-center space-x-5 p-2 hover:bg-gray-100 cursor-pointer' onClick={(e) => handleEvent(e)}>
+        <div className='flex items-center space-x-5 p-2 hover:bg-gray-100 dark:hover:bg-dark-mode-background-500 cursor-pointer' onClick={(e) => handleEvent(e)}>
         {img &&
             <div className='relative h-5 w-5'>
                 <Image src={img} layout='fill' objectFit='cover' />

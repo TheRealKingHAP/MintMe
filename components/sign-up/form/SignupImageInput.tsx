@@ -43,13 +43,13 @@ function SignupImageInput({handleChange, username, image}: Props) {
             <div className='relative h-36 w-36 rounded-full'>
                 {image ? <Image src={image} layout='fill' objectFit='cover' className='rounded-full' />
                 :
-                <div className='h-full w-full bg-gray-400 rounded-full'>
+                <div className='h-full w-full bg-gray-400 dark:bg-dark-mode-background-card-color rounded-full'>
                 </div>
                 }
-                <button onClick={handleClick} type='button' className='bg-gray-500 hover:bg-gray-600 bg-opacity-50 absolute top-1/2 -translate-y-1/2 right-1/2 translate-x-1/2 rounded-3xl w-28 h-8 text-white font-medium text-sm'>{image ? 'Change' : 'Upload'} image</button>
+                <button onClick={handleClick} type='button' className='bg-gray-500 dark:bg-dark-mode-background-hover-color dark:hover:bg-dark-mode-background-500 hover:bg-gray-600 bg-opacity-50 absolute top-1/2 -translate-y-1/2 right-1/2 translate-x-1/2 rounded-3xl w-28 h-8 text-white font-medium text-sm'>{image ? 'Change' : 'Upload'} image</button>
                 <input ref={imgInput} accept='image/png, image/jpeg' multiple={false} type={'file'} onChange={(e) => handleImageChange(e)} className='hidden'></input>
             </div>
-            <p className='font-semibold mt-5 text-gray-700'>{username ? username : 'Avatar picture'}</p>
+            <p className='font-semibold mt-5 text-gray-700 dark:text-gray-50'>{username ? username : 'Avatar picture'}</p>
         </div>
     )
 }

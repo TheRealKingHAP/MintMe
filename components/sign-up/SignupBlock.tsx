@@ -17,13 +17,15 @@ import {sign} from 'tweetnacl';
 
 type Props = {
   loadingCallBack: CallableFunction,
-  finishedCallBack?: CallableFunction,
+  finishedCallBack: CallableFunction,
+  changeFormStep: CallableFunction
   createdUser?: string
+  idx: number
 }
-function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
+function SignupBlock({loadingCallBack, finishedCallBack, idx, changeFormStep}: Props) {
   const {wallet, publicKey, signMessage} = useWallet()
   const {setVisible} = useWalletModal();
-  const [formSelectIDX, setFormSelectIDX] = useState<number>(0);
+  const [formSelectIDX, setFormSelectIDX] = useState<number>(idx);
   const [acceptedTC, setAcceptedTC] = useState<boolean>(false);
   const [data, setData] = useState<User>({
     email: '',
@@ -99,7 +101,7 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
           <div id='Bio' className='space-y-12 flex flex-col mt-5 items-center w-full'>
             <SignupImageInput image={data.profile_pic} username={data.username} handleChange={(value: string) => setData({...data, profile_pic: value})} />
             <SignupInput title='Greetings!' inputType='text' inputValue={data.public.feed.bio.introduction} handleChange={(value: string) => setData(changeBioData('introduction', value))} />
-            <SignupTextAreaInput title='About' inputValue={data.public.feed.bio.description} handleChange={(value: string) => setData(changeBioData('description', value))} className={'border-2 border-gray-300 rounded-3xl p-2 h-28 w-full focus:border-violet-400 outline-none resize-none'}/>
+            <SignupTextAreaInput title='About' inputValue={data.public.feed.bio.description} handleChange={(value: string) => setData(changeBioData('description', value))} className={'border-2 border-gray-300 dark:bg-dark-mode-background-card-color dark:border-transparent dark:placeholder:text-gray-200 rounded-3xl p-2 h-28 w-full focus:border-violet-400 outline-none resize-none'}/>
             <SignupSelectPlatform value={data.public.main_platform} handleChange={(value:Platform) => setData({...data, public:{...data.public, main_platform: value}})}/>
           </div>
         )
@@ -117,14 +119,14 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
       case 3:
         return (
           <div className='text-center landscape:2xl:mb-32'>
-            {wallet?.adapter.connected ? <p className='font-medium text-gray-600 mb-5'>Connected wallet:</p> : null}
+            {wallet?.adapter.connected ? <p className='font-medium text-gray-600 dark:text-gray-200 mb-5'>Connected wallet:</p> : null}
             <WalletMultiButton />
             {
               wallet?.adapter.connected ?
-              <div id='termsandconditions' className='mt-16 text-sm text-gray-500 flex items-center space-x-2'>
+              <div id='termsandconditions' className='mt-16 text-sm text-gray-500 dark:text-gray-300 flex items-center space-x-2'>
                 <p>I accept terms and conditions</p>
                 <div className={`h-5 w-5 border-2 border-gray-300 rounded-md cursor-pointer ${acceptedTC ? 'bg-violet-500' : null}`} onClick={() => setAcceptedTC(!acceptedTC)}>
-                  <BsCheck  className='w-full h-full text-white'/>
+                  <BsCheck  className={`w-full h-full ${acceptedTC ? 'text-white' : 'text-transparent'}`}/>
                 </div>
               </div>
               :
@@ -141,28 +143,28 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
       case 0:
         return (
           <div className='w-full mt-12 landscape:2xl:mt-12 flex flex-col items-center'>
-            <h3 className='text-center font-bold text-gray-800 text-2xl landscape:2xl:text-3xl'>Create an account</h3>
-            <p className='text-center mt-2 w-3/4 landscape:2xl:w-full text-base landscape:2xl:text-xl text-gray-400'>Let's get started, please enter the information required below</p>
+            <h3 className='text-center font-bold text-gray-800 dark:text-white text-2xl landscape:2xl:text-3xl'>Create an account</h3>
+            <p className='text-center mt-2 w-3/4 landscape:2xl:w-full text-base landscape:2xl:text-xl text-gray-400 dark:text-gray-300'>Let's get started, please enter the information required below</p>
           </div>
         )
       case 1:
         return (
           <div className='w-full mt-12 landscape:2xl:mt-12 flex flex-col items-center'>
-            <h3 className='text-center font-bold text-gray-800 text-2xl landscape:2xl:text-3xl'>Let's finish your page</h3>
+            <h3 className='text-center font-bold text-gray-800 dark:text-white text-2xl landscape:2xl:text-3xl'>Let's finish your page</h3>
           </div>
         )
       case 2:
         return (
           <div className='w-full mt-12 landscape:2xl:mt-12 flex flex-col items-center'>
-            <h3 className='text-center font-bold text-gray-800 text-2xl landscape:2xl:text-3xl'>Just one last step</h3>
-            <p className='text-center mt-2 w-3/4 landscape:2xl:w-full text-base landscape:2xl:text-xl text-gray-400'>Link your social media (optional)</p>
+            <h3 className='text-center font-bold text-gray-800 dark:text-white text-2xl landscape:2xl:text-3xl'>Just one last step</h3>
+            <p className='text-center mt-2 w-3/4 landscape:2xl:w-full text-base landscape:2xl:text-xl text-gray-400 dark:text-gray-300'>Link your social media (optional)</p>
           </div>
         )
       case 3:
         return (
           <div className='w-full mt-12 landscape:2xl:mt-12 flex flex-col items-center'>
-            <h3 className='text-center font-bold text-gray-800 text-2xl landscape:2xl:text-3xl'>Connect your wallet</h3>
-            <p className='text-center mt-2 w-3/4 landscape:2xl:w-full text-base landscape:2xl:text-xl text-gray-400'>This will be the wallet you want to recieve the payments and log in</p>
+            <h3 className='text-center font-bold text-gray-800 dark:text-white text-2xl landscape:2xl:text-3xl'>Connect your wallet</h3>
+            <p className='text-center mt-2 w-3/4 landscape:2xl:w-full text-base landscape:2xl:text-xl text-gray-400 dark:text-gray-300'>This will be the wallet you want to recieve the payments and log in</p>
           </div>
         )
       default:
@@ -171,10 +173,10 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
   }
   const handleFormStepChange = (step: 'Next' | 'Back') => {
     if(step == 'Next'){
-      setFormSelectIDX(formSelectIDX+1);
+      changeFormStep(idx+1)
     }
     if(step == 'Back'){
-      setFormSelectIDX(formSelectIDX-1);
+      changeFormStep(idx-1);
     }
     return
   }
@@ -190,43 +192,43 @@ function SignupBlock({loadingCallBack, finishedCallBack}: Props) {
       }
     }
     if(acceptedTC && signedMessage){
-      console.log(user)
-      const res = await fetch('http://localhost:3000/api/users/addUser',
-        {method: 'POST',
-        body: JSON.stringify({user, signedMessage})
+      try {
+        console.log(user)
+        const res = await fetch('http://localhost:3000/api/users/addUser',
+          {method: 'POST',
+          body: JSON.stringify({user, signedMessage})
+          }
+        )
+        loadingCallBack(false)
+        if(!res.ok){
+          let error = await res.text()
+          throw error
         }
-      )
-      loadingCallBack(false)
-      if(res.status != 200){
-        throw new Error('Sorry something went wrong')
-      }
-      if(finishedCallBack){
-        finishedCallBack(true, data.username)
+        if(res.ok){
+          finishedCallBack(true, data.username, 'success')
+        }  
+      } catch (error: any) {
+        finishedCallBack(true, data.username, error)
       }
     }
     return
   }
   return (
-    <div className='bg-white flex flex-col space-y-16 pb-5 landscape:2xl:space-y-0 justify-between items-center h-full  w-full landscape:2xl:w-3/4'>
+    <div className='bg-white dark:bg-dark-mode-background-background flex flex-col space-y-16 pb-5 landscape:2xl:space-y-0 justify-between items-center h-full  w-full landscape:2xl:w-3/4'>
         <div className='w-3/4 mt-5'>
-          <div onClick={formSelectIDX < 1 ? ()=>{} : () => handleFormStepChange('Back')} className={` w-max cursor-pointer flex items-center space-x-2 ${formSelectIDX < 1 ? 'hidden' : 'block'} `}>
-            <BsArrowLeft className={` h-7 w-7  text-gray-600`}/>
-            <p className='font-medium text-gray-600'>Back</p>
+          <div onClick={idx < 1 ? ()=>{} : () => handleFormStepChange('Back')} className={` w-max cursor-pointer flex items-center space-x-2 text-gray-600 dark:text-gray-200 ${idx < 1 ? 'hidden' : 'block'} `}>
+            <BsArrowLeft className={` h-7 w-7 `}/>
+            <p className='font-medium '>Back</p>
           </div>
         </div>
-        {renderTitle(formSelectIDX)}
+        {renderTitle(idx)}
         <form onSubmit={handleSubmit} className={'flex flex-col items-center w-3/4 landscape:2xl:w-[24rem]'}>
           {
-            renderSelectedForm(formSelectIDX)
+            renderSelectedForm(idx)
           }
-          {
-          wallet?.adapter.connected && acceptedTC ? 
-            <button type={'submit'} className={`p-2 mt-24 w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === formsLength ? 'block' : 'hidden'} `}>{'Sign up'}</button>
-          :
-            null
-          }
+          <button disabled={wallet?.adapter.connected && acceptedTC ? false : true} type={'submit'} className={`p-2 mt-24 w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium ${idx === formsLength ? 'block' : 'hidden'} `}>{'Sign up'}</button>
         </form>
-        <button type={'button'} onClick={formSelectIDX == formsLength ? () => {} : () => handleFormStepChange('Next')} className={`p-2 mt-24  w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${formSelectIDX === formsLength ? 'hidden' : 'block'} `}>{'Next'}</button>        
+        <button type={'button'} onClick={idx == formsLength ? () => {} : () => handleFormStepChange('Next')} className={`p-2 mt-24  w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${idx === formsLength ? 'hidden' : 'block'} `}>{'Next'}</button>      
     </div>
   )
 }

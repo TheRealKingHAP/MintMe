@@ -3,15 +3,27 @@ import SignupBlock from '../components/sign-up/SignupBlock'
 import {AiOutlineLoading} from 'react-icons/ai'
 import { useRouter } from 'next/router'
 import LoaderComponent from '../components/LoaderComponent'
-import { BsCheckCircleFill } from 'react-icons/bs'
+import { BsCheckCircleFill, BsX } from 'react-icons/bs'
+import SnackBar from '../components/notifications/SnackBar'
 type Props = {}
 
 function SignUp({}: Props) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [signUpFinished, setSignUpFinished] = useState<boolean>(false)
+  const [error, setError] = useState<string>('')
+  const [index, setIndex] = useState<number>(0);
   const router = useRouter()
-  const handleFinishSignup = (isFinished: boolean, user: string) => {
+  const handleFinishSignup = (isFinished: boolean, user: string, error?: string) => {
+    setIsLoading(false)
     setSignUpFinished(isFinished);
+    if(error) {
+      setError(error)
+      setTimeout(() => {
+        setSignUpFinished(false)
+        setIndex(0);
+      } , 2000)
+      return
+    }
     router.push(`/user/${user}`)
   }
   return (
@@ -25,16 +37,28 @@ function SignUp({}: Props) {
             </div>
             <LoaderComponent />
           </div>
-          <div className={` flex-col justify-center items-center w-full h-full ${signUpFinished ? 'flex' : 'hidden'}`}>
+          {!error ? 
+          <div className={` flex-col justify-center items-center w-full h-full flex`}>
             <BsCheckCircleFill className='text-green-500 h-7 w-7' />
-            <p className='text-gray-500 text-lg font-medium mt-5'>Your page is ready</p>
+            <p className='text-gray-500 dark:text-dark-secondary text-lg font-medium mt-5'>Your page is ready</p>
           </div>
+          :
+          null
+          }
+          {error ?
+          <div className={` flex-col justify-center items-center w-full h-full flex`}>
+            <BsX className='text-red-500 h-7 w-7' />
+            <p className='text-gray-500 dark:text-dark-secondary text-lg font-medium mt-5'>{error}</p>
+         </div>
+          :
+          null
+          }
         </div>
         :
         null
       }
       {!isLoading && !signUpFinished ? 
-        <SignupBlock finishedCallBack={(isFinished: boolean, username: string) => handleFinishSignup(isFinished, username)} loadingCallBack={(value: boolean) => setIsLoading(value) } />
+        <SignupBlock changeFormStep={(idx: number) => setIndex(idx)} idx={index} finishedCallBack={(isFinished: boolean, username: string, status: 'error' | 'success') => handleFinishSignup(isFinished, username, status )} loadingCallBack={(value: boolean) => setIsLoading(value) } />
         :
         null
       }
