@@ -59,7 +59,7 @@ const Explore = () => {
                     )
                     )
                     :
-                    [0,1,2,3,4].map((index) => (
+                    Array(5).map((index) => (
                         <SkeletonUserCard key={index} />
                     ))
                     }

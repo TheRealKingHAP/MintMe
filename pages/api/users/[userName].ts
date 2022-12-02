@@ -4,7 +4,6 @@ import { ErrorInfo } from 'react';
 import { User } from '../../../src/models/User';
 import clientPromise from '../../../src/services/database.service';
 
-const {MONGODB_DB, DONATION_COLLECTION_NAME, USER_COLLECTION_NAME} = process.env;
 type Error = {
   error: string | unknown  
 }
@@ -18,8 +17,8 @@ export default async function handler(
         try{
             const {userName} = req.query;
             const client: MongoClient = await clientPromise
-            const db: Db = client.db(MONGODB_DB)
-            const collection: Collection = db.collection(USER_COLLECTION_NAME ?? '')
+            const db: Db = client.db(process.env.MONGODB_DB)
+            const collection: Collection = db.collection(process.env.USER_COLLECTION_NAME ?? '')
             const user: User = (await collection.findOne({"username": `${userName}`})) as User
             res.status(200).json(user)
         } catch (error) {
