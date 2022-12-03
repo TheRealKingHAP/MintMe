@@ -12,26 +12,24 @@ type Error = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<User | Error | string>
+  res: NextApiResponse<User | Error | string | object>
 ) {
   switch(req.method) {
     case 'GET':
         try{
           //const {pubKey} = JSON.parse(req.body);
-          const authHeader = req.headers.authorization
-          if(!authHeader) {
+          //const authHeader = req.headers.authorization;
+          const {cookies} = req;
+          const jwt = cookies.MintMeJWT;
+          if(!jwt) {
             return res.status(401).send({error: {message: 'Missing authorization header'}})
           }
-          const [, authKey] = authHeader.split(' ')
-          const [publicKey, message, signature] = authKey.split('.')
+          const [publicKey, message, signature] = jwt.split('.')
           const hasValidSign = nacl.sign.detached.verify(
             base58.decode(message),
             base58.decode(signature),
             new PublicKey(publicKey).toBytes()
           );
-          console.log({
-            hasValidSign
-          });
           if(!hasValidSign){
             return res.status(401).send({error: {message: 'Invalid Signature'}})
           }
@@ -48,7 +46,7 @@ export default async function handler(
           const collection: Collection = db.collection(process.env.USER_COLLECTION_NAME ?? '')
           const user: User = (await collection.findOne({"public.public_wallet": `${pubKey}`})) as User
           console.log(user);*/
-          res.status(200).json('Success')
+          res.status(200).json({message: 'Success'})
         } catch (error) {
             res.status(400).json({error})
         }

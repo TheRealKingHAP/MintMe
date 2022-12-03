@@ -45,7 +45,7 @@ function NavBar({className}: Props) {
       if(!publicKey) throw new Error('Wallet not connected')
       if(!signMessage) throw new Error('Wallet does not support message siging!')
       const signature = await reqAuth({
-        action: 'auth',
+        action: 'skip',
         method: 'POST',
         wallet: {
           publicKey,
@@ -57,7 +57,12 @@ function NavBar({className}: Props) {
     } catch (error: any) {
       throw new Error('Signing message failed' + error.message)
     }
-  }  
+  }
+  useEffect(() => {
+    if(connected){
+      handleSign()
+    }
+  }, [connected])
   return (
     <div id='NavBar' className={`${ isActive ? 'max-h-72' : 'max-h-20'}  bg-white dark:bg-dark-mode-background-card-color text-gray-600 dark:text-white flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-5 lg:space-y-0 px-5 py-5 lg:p-12 w-full lg:h-[72px]  shadow-sm transition-all transform ease-in-out duration-300 z-20 relative ${className}`}>
         <div className='flex justify-between items-center'>
@@ -80,7 +85,6 @@ function NavBar({className}: Props) {
             :
             null
           }
-          <button onClick={handleSign}>Sign</button>
           {!wallet?.adapter.connected ? 
           <li><NavBarElement className={'hover:text-gray-900 dark:hover:text-violet-500 transition-all ease-in-out duration-100'} label='Log in' onClickFunction={!wallet ? onRequestConnectWallet : redirectProfile}/></li>
           :

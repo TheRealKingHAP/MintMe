@@ -8,25 +8,16 @@ type Props = {
 
 function MyAccount({}: Props) {
     const {wallet, signMessage, publicKey} = useWallet()
+    const [data, setData] = useState()
     const router = useRouter()
     const getData = async () => {
-        await fetch('http://localhost:3000/api/users/user_account',
-        {
-            method: 'POST',
-            body: JSON.stringify({pubKey: publicKey})
-        }
-        )
-        .then((res) => {
-            res.json()
-        })
-        .then((data) => console.log(data))
+        const res = await (await fetch('http://localhost:3000/api/users/user_account')).json()
+        setData(res);
+        console.log(res)
     }
     useEffect(() => {
-      if(!wallet){
-        router.push('/')
-      }
       getData()
-    }, [wallet])
+    }, [])
 
     return (
         <div className=''>

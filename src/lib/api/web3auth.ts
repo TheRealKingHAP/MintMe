@@ -1,6 +1,8 @@
 import { PublicKey } from '@solana/web3.js';
 import base58 from 'bs58';
 import { Router, useRouter } from 'next/router';
+import { NextRequest } from 'next/server';
+import nacl from 'tweetnacl';
 
 
 const baseUrl = 'http:localhost:3000'
@@ -24,8 +26,22 @@ type RequestAuth = {
     wallet: MessageSigner,
     action: string
 }
+type TokenValidation = {
+    token: string,
+    returnData?: 'Expiration-Time' | 'PublicKey' | 'Message'
+}
+type ValidateTokenReturn = {
+    status: boolean,
+    expirationTime?: number,
+    message?: string,
+    publicKey?: string
+}
 export const createAuthToken = async ({action, wallet}: AuthToken) => {
-    const {message} = await (await fetch('http://localhost:3000/api/auth/get_message')).json()
+    const res = await fetch('http://localhost:3000/api/auth/get_message')
+    const {message, error} = await res.json()
+    if(res.status != 200){
+        return null
+    }
     const expirationDate = () => {
         let date = new Date()
         date.setDate(date.getDate() + 5);
@@ -45,11 +61,15 @@ export const createAuthToken = async ({action, wallet}: AuthToken) => {
 }
 
 export const reqAuth = async ({method, wallet, action} : RequestAuth) => {
-    let authToken;
-    authToken = await createAuthToken({
+    
+    const authToken = await createAuthToken({
         action: action,
         wallet: wallet
     })
+    if(action === 'skip' && !authToken){
+        //try to use existing token
+        return 'Session recover successfully'
+    }   
     const response = (await fetch(`/api/auth/login`,
         {
             method: method,
@@ -65,4 +85,43 @@ export const reqLogOut = async ({wallet, method}: RequestLogOut) => {
     })).json()
     await wallet.disconect()
     return response
+}
+
+export const validateToken = ({token, returnData}: TokenValidation) => {
+    try {
+        const [publicKey, message, signature] = token.split('.')
+        const hasValidSign = nacl.sign.detached.verify(
+          base58.decode(message),
+          base58.decode(signature),
+          new PublicKey(publicKey).toBytes()
+        );
+        if(!hasValidSign){
+            throw 'Signature not valid'
+        }
+        const content = JSON.parse(new TextDecoder().decode(base58.decode(message))) as {
+            action: string,
+            exp: number
+          };
+        if(Date.now() > content.exp) {
+            throw 'Token expired'
+        }
+        if(!returnData){
+            return {status: true} as ValidateTokenReturn
+        }
+        switch(returnData){
+            case 'Expiration-Time':
+                return {status: true, expirationTime: content.exp} as ValidateTokenReturn
+                
+            case 'Message':
+                return {status: true, message} as ValidateTokenReturn
+            
+            case 'PublicKey':
+                return {status: true, publicKey} as ValidateTokenReturn
+            default:
+                return {status: true} as ValidateTokenReturn
+        }
+    } catch (error) {
+        return {status: false} as ValidateTokenReturn
+    }
+    
 }

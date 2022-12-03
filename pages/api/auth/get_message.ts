@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { validateToken } from "../../../src/lib/api/web3auth";
 
 
 
@@ -10,6 +11,11 @@ export default async function GetUniqueMessageHandler (
     switch(req.method){
         case 'GET':
             //Generate unique message to sign and send it to front end
+            const {cookies} = req;
+            const jwt = cookies.MintMeJWT;
+            if(jwt && validateToken({token: jwt}).status){
+                return res.status(401).send({error: {message: 'Sorry you are logged in'}})
+            }
             const message = getRandomMessage(58)
             res.status(200).json({message: message})
             break;
