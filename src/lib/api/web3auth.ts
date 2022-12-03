@@ -12,6 +12,13 @@ type MessageSigner = {
     signMessage(message: Uint8Array) : Promise<Uint8Array>,
     publicKey: PublicKey
 }
+type RequestLogOut = {
+    method: 'GET'|'POST'|'DELETE',
+    wallet: WalletLogOut
+}
+type WalletLogOut = {
+    disconect(): Promise<void>
+}
 type RequestAuth = {
     method: 'GET'|'POST'|'DELETE',
     wallet: MessageSigner,
@@ -43,12 +50,19 @@ export const reqAuth = async ({method, wallet, action} : RequestAuth) => {
         action: action,
         wallet: wallet
     })
-    const response = (await fetch(`/api/users/user_account`,
+    const response = (await fetch(`/api/auth/login`,
         {
             method: method,
             headers: {Authorization: `Bearer ${authToken}`},
         }
     )).json()
     
+    return response
+}
+export const reqLogOut = async ({wallet, method}: RequestLogOut) => {
+    const response = (await fetch('/api/auth/logout', {
+        method: method
+    })).json()
+    await wallet.disconect()
     return response
 }

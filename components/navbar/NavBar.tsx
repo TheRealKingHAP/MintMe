@@ -10,7 +10,7 @@ import { Router, useRouter } from 'next/router';
 import Image from 'next/image';
 import ShortenString from '../../src/utils/ShortenString';
 import {sign} from 'tweetnacl';
-import { createAuthToken, reqAuth } from '../../src/lib/api/web3auth';
+import { createAuthToken, reqAuth, reqLogOut } from '../../src/lib/api/web3auth';
 
 interface Props {
   className?: string
@@ -18,7 +18,7 @@ interface Props {
 
 function NavBar({className}: Props) {
   const router = useRouter();
-  const {wallet, publicKey, signMessage, connected} = useWallet();
+  const {wallet, publicKey, signMessage, connected, disconnect} = useWallet();
   const {setVisible} = useWalletModal();
   const [isActive, setIsActive] = useState(false)
   const onRequestConnectWallet = () => {
@@ -28,11 +28,17 @@ function NavBar({className}: Props) {
   const redirectProfile = () => {
     router.push('/');
   }
-  const handleDisconnect = () => {
+  const handleDisconnect = async () => {
     if(!wallet){
       throw new Error('There is no wallet connected');
     };
-    wallet.adapter.disconnect()
+    const logOut = await reqLogOut({
+      method: 'DELETE',
+      wallet: {
+        disconect: disconnect!
+      }
+    })
+    console.log(logOut)
   }
   const handleSign = async () => {
     try {
@@ -40,7 +46,7 @@ function NavBar({className}: Props) {
       if(!signMessage) throw new Error('Wallet does not support message siging!')
       const signature = await reqAuth({
         action: 'auth',
-        method: 'GET',
+        method: 'POST',
         wallet: {
           publicKey,
           signMessage: signMessage!
