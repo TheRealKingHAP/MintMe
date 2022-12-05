@@ -121,7 +121,7 @@ export const validateToken = ({token, returnData}: TokenValidation) => {
                 return {status: true} as ValidateTokenReturn
         }
     } catch (error) {
-        return {status: false} as ValidateTokenReturn
+        return {status: false, error:{message: error}} as ValidateTokenReturn
     }
     
 }
