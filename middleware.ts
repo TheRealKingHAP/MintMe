@@ -3,6 +3,7 @@ import base58 from "bs58";
 import { NextURL } from "next/dist/server/web/next-url";
 import { NextRequest, NextResponse } from "next/server";
 import nacl from "tweetnacl";
+import { validateToken } from "./src/lib/api/web3auth";
 
 
 
@@ -15,26 +16,8 @@ export function middleware(req: NextRequest){
     }
     if(url.includes('/user/my_account')){
         try {
-            const [publicKey, message, signature] = jwt.split('.')
-            const content = JSON.parse(new TextDecoder().decode(base58.decode(message))) as {
-            action: string,
-            exp: number
-            };
-            const hasValidSign = nacl.sign.detached.verify(
-            base58.decode(message),
-            base58.decode(signature),
-            new PublicKey(publicKey).toBytes()
-            );
-            console.log({
-            hasValidSign, message: 'from Middleware'
-            });
-            if(!hasValidSign){
-                
-                throw 'Sorry not a valid sign'
-            }
-            if(Date.now() > content.exp) {
-                throw 'Sorry token expired'
-            }
+            const isValid = validateToken({token: jwt})
+            if(!isValid.status)
             return NextResponse.next()    
         } catch (error) {
             cookies.set('MintMeJWT', '', {
