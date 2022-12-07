@@ -41,11 +41,11 @@ export default async function handler(
             return res.status(401).send({error: {message: 'Expired signature'}})
           }
 
-          /*const client: MongoClient = await clientPromise
+          const client: MongoClient = await clientPromise
           const db: Db = client.db(process.env.MONGODB_DB)
           const collection: Collection = db.collection(process.env.USER_COLLECTION_NAME ?? '')
-          const user: User = (await collection.findOne({"public.public_wallet": `${pubKey}`})) as User
-          console.log(user);*/
+          const user: User[] = (await collection.find({"public.public_wallet": `${publicKey}`}).toArray()) as User[]
+          console.log(user);
           res.status(200).json({message: 'Success'})
         } catch (error) {
             res.status(400).json({error})

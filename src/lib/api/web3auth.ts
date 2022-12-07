@@ -38,8 +38,8 @@ type ValidateTokenReturn = {
 }
 export const createAuthToken = async ({action, wallet}: AuthToken) => {
     const res = await fetch('http://localhost:3000/api/auth/get_message')
-    const {message, error} = await res.json()
-    if(res.status != 200){
+    const {message} = await res.json()
+    if(message == 'skip'){
         return null
     }
     const expirationDate = () => {

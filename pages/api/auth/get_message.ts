@@ -14,7 +14,7 @@ export default async function GetUniqueMessageHandler (
             const {cookies} = req;
             const jwt = cookies.MintMeJWT;
             if(jwt && validateToken({token: jwt}).status){
-                return res.status(401).send({error: {message: 'Sorry you are logged in'}})
+                return res.status(200).send({message: 'skip'})
             }
             const message = getRandomMessage(58)
             res.status(200).json({message: message})

@@ -7,7 +7,6 @@ import nacl from "tweetnacl";
 
 
 export function middleware(req: NextRequest){
-    console.log('Hi from middleware')
     const {cookies} = req
     const jwt = cookies.get('MintMeJWT');
     const url = req.url
@@ -30,6 +29,7 @@ export function middleware(req: NextRequest){
             hasValidSign, message: 'from Middleware'
             });
             if(!hasValidSign){
+                
                 throw 'Sorry not a valid sign'
             }
             if(Date.now() > content.exp) {
@@ -37,6 +37,10 @@ export function middleware(req: NextRequest){
             }
             return NextResponse.next()    
         } catch (error) {
+            cookies.set('MintMeJWT', '', {
+                httpOnly: true,
+                sameSite: 'strict',
+            })
             return NextResponse.redirect('http:localhost:3000/')
         }
     }
@@ -44,5 +48,5 @@ export function middleware(req: NextRequest){
 }
 
 export const config = {
-    matcher: '/user/my_account',
+    matcher: ['/user/my_account', '/api/users/user_account'],
 }

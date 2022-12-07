@@ -12,7 +12,7 @@ export default async function LogOutHandler (
                 const {cookies} = req
                 const jwt = cookies.MintMeJWT;
                 if(!jwt){
-                    throw 'You are already not loged in'
+                    throw 'You are already not logged in'
                 }else{
                     const serialized = serialize('MintMeJWT', '', {
                         httpOnly: true,

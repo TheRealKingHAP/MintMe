@@ -78,10 +78,10 @@ function NavBar({className}: Props) {
         <HiOutlineX className={` ${!isActive ? 'hidden' : 'block'} lg:hidden h-7 w-7 text-gray-700 dark:text-white`} onClick={() => {setIsActive(false)}}/>
         </div>
         <ul className={'overflow-hidden lg:overflow-visible lg:w-1/2 flex flex-col lg:flex-row lg:items-center lg:justify-end space-y-2 lg:space-y-0 lg:space-x-16 text-base font-bold '}>
-          <Link href={'/explore'}><a className='active:p-1 lg:active:p-0 hover:text-gray-900 dark:hover:text-violet-500 active:bg-gray-100 active:py-2 lg:active:bg-transparent lg:active:py-0 transition-all ease-in-out duration-100'><li>Explore</li></a></Link>
-          <Link href={'/donate'}><a className='active:p-1 lg:active:p-0 hover:text-gray-900 dark:hover:text-violet-500 active:bg-gray-100 active:py-2 lg:active:bg-transparent lg:active:py-0 transition-all ease-in-out duration-100'><li>Donate</li></a></Link>
+          <Link href={'/explore'} legacyBehavior={true}><a className='active:p-1 lg:active:p-0 hover:text-gray-900 dark:hover:text-violet-500 active:bg-gray-100 active:py-2 lg:active:bg-transparent lg:active:py-0 transition-all ease-in-out duration-100'><li>Explore</li></a></Link>
+          <Link href={'/donate'} legacyBehavior={true}><a className='active:p-1 lg:active:p-0 hover:text-gray-900 dark:hover:text-violet-500 active:bg-gray-100 active:py-2 lg:active:bg-transparent lg:active:py-0 transition-all ease-in-out duration-100'><li>Donate</li></a></Link>
           {wallet?.adapter.connected ? 
-            <Link href={'/user/my_account'}><a className='active:p-1 lg:active:p-0 hover:text-gray-900 dark:hover:text-violet-500 active:bg-gray-100 active:py-2 lg:active:bg-transparent lg:active:py-0 transition-all ease-in-out duration-100'><li>My account</li></a></Link>
+            <Link href={'/user/my_account'} legacyBehavior={true}><a className='active:p-1 lg:active:p-0 hover:text-gray-900 dark:hover:text-violet-500 active:bg-gray-100 active:py-2 lg:active:bg-transparent lg:active:py-0 transition-all ease-in-out duration-100'><li>My account</li></a></Link>
             :
             null
           }
@@ -98,7 +98,7 @@ function NavBar({className}: Props) {
             </div>
           </li>
           }
-          {!wallet?.adapter.connected && <Link href={'/signup'}><a className='bg-violet-500 rounded-3xl w-24 text-center p-2 text-white font-semibold'><li>Sign up</li></a></Link>}
+          {!wallet?.adapter.connected && <Link href={'/signup'} legacyBehavior={true}><a className='bg-violet-500 rounded-3xl w-24 text-center p-2 text-white font-semibold'><li>Sign up</li></a></Link>}
         </ul>
     </div>
   )
