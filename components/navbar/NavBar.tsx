@@ -89,10 +89,7 @@ function NavBar({className}: Props) {
           <li><NavBarElement className={'hover:text-gray-900 dark:hover:text-violet-500 transition-all ease-in-out duration-100'} label='Log in' onClickFunction={!wallet ? onRequestConnectWallet : redirectProfile}/></li>
           :
           <li className=''>
-            <div className='hidden lg:block'>
-              <WalletMultiButton />
-            </div>
-            <div className='lg:hidden flex space-x-5 items-center'>
+            <div className='flex space-x-5 items-center'>
               <p className='text-violet-500'>{ShortenString(wallet.adapter.publicKey?.toBase58(), 4)}</p>
               <button type='button' className='font-medium text-white bg-violet-500 rounded-xl p-2' onClick={handleDisconnect}>Disconnect</button>
             </div>

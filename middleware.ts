@@ -16,8 +16,11 @@ export function middleware(req: NextRequest){
     }
     if(url.includes('/user/my_account')){
         try {
-            const isValid = validateToken({token: jwt})
-            if(!isValid.status)
+            const isValid = validateToken({token: jwt, returnData: "Expiration-Time"})
+            if(!isValid.status){
+                throw 'Error'
+            }
+            
             return NextResponse.next()    
         } catch (error) {
             cookies.set('MintMeJWT', '', {

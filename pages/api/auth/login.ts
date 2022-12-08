@@ -28,6 +28,7 @@ export default async function LogInHandler(
                     token: authKey,
                     returnData: "Expiration-Time"
                 })
+                console.log(isTokenValid.expirationTime)
                 const serialized = serialize('MintMeJWT', authKey, {
                     httpOnly: true,
                     sameSite: 'strict',

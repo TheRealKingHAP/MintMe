@@ -17,7 +17,7 @@ export default async function LogOutHandler (
                     const serialized = serialize('MintMeJWT', '', {
                         httpOnly: true,
                         sameSite: 'strict',
-                        path: '/'
+                        path: '/',
                     })
                     res.setHeader("Set-Cookie", serialized);
                     res.status(200).json({message: 'Successfuly logged out'})
