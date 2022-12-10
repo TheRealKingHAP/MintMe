@@ -28,11 +28,10 @@ export default async function LogInHandler(
                     token: authKey,
                     returnData: "Expiration-Time"
                 })
-                console.log(isTokenValid.expirationTime)
                 const serialized = serialize('MintMeJWT', authKey, {
                     httpOnly: true,
                     sameSite: 'strict',
-                    maxAge: isTokenValid.expirationTime,
+                    maxAge: 60 * 60 * 24 * 1,
                     path: '/'
                 })
                 res.setHeader('Set-Cookie', serialized);

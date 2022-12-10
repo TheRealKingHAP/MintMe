@@ -45,9 +45,8 @@ export const createAuthToken = async ({action, wallet}: AuthToken) => {
     const expirationDate = () => {
         let desiredDays = 1;
         let computedDate = 60 * 60 * 24 * desiredDays
-        return computedDate
+        return Date.now()+(computedDate * 1000)
     }
-    console.log('Web3Auth :' , expirationDate())
     const encodedMessage = new TextEncoder().encode(JSON.stringify({
         action,
         message,
@@ -103,7 +102,7 @@ export const validateToken = ({token, returnData}: TokenValidation) => {
             action: string,
             exp: number
         };
-        if(Date.now()  > Date.now() + (content.exp * 1000)) {
+        if(Date.now()  > content.exp) {
             throw 'Token expired'
         }
         if(!returnData){
