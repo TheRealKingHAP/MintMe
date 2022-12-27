@@ -99,7 +99,7 @@ function SignupBlock({loadingCallBack, finishedCallBack, idx, changeFormStep}: P
       case 1:
         return (
           <div id='Bio' className='space-y-12 flex flex-col mt-5 items-center w-full'>
-            <SignupImageInput image={data.profile_pic} username={data.username} handleChange={(value: string) => setData({...data, profile_pic: value})} />
+            <SignupImageInput image={data.profile_pic} username={data.username} handleChange={(value: string) => setData(prev => ({...prev, profile_pic: value}))} />
             <SignupInput title='Greetings!' inputType='text' inputValue={data.public.feed.bio.introduction} handleChange={(value: string) => setData(changeBioData('introduction', value))} />
             <SignupTextAreaInput title='About' inputValue={data.public.feed.bio.description} handleChange={(value: string) => setData(changeBioData('description', value))} className={'border-2 border-gray-300 dark:bg-dark-mode-background-card-color dark:border-transparent dark:placeholder:text-gray-200 rounded-3xl p-2 h-28 w-full focus:border-violet-400 outline-none resize-none'}/>
             <SignupSelectPlatform value={data.public.main_platform} handleChange={(value:Platform) => setData({...data, public:{...data.public, main_platform: value}})}/>
@@ -205,10 +205,10 @@ function SignupBlock({loadingCallBack, finishedCallBack, idx, changeFormStep}: P
           throw error
         }
         if(res.ok){
-          finishedCallBack(true, data.username, 'success')
+          finishedCallBack(true, data.username, null, 'success')
         }  
       } catch (error: any) {
-        finishedCallBack(true, data.username, error)
+        finishedCallBack(true, data.username, error, null)
       }
     }
     return

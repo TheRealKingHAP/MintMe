@@ -10,6 +10,7 @@ import {Connection, PublicKey, clusterApiUrl} from '@solana/web3.js'
 import { SignedMessage } from '../../../src/models/SignedMessage';
 import nacl from 'tweetnacl';
 import base58 from 'bs58';
+import { validateToken } from '../../../src/lib/api/web3auth';
 
 type Error = {
   error: string | unknown  
@@ -55,7 +56,17 @@ export default async function handler(
     case 'POST':
     try{
       //message does not match the client side message this is for testing purposes only
-      const message = new TextEncoder().encode('Please sign 2 this message to complete sign up');
+      const message = new TextEncoder().encode('Please sign this message to complete sign up');
+      const jwt = req.cookies.MintMeJWT
+      if(!jwt){
+        throw 'Sorry there was an error with sign authentication'
+      }
+      const isSessionValid = validateToken({
+        token: jwt
+      })
+      if(!isSessionValid.status){
+        throw 'Sorry cannot verify the sign'
+      }
       let data: ReqData = JSON.parse(req.body);
       let user: User = data.user
       let signedMessage = data.signedMessage
@@ -66,21 +77,24 @@ export default async function handler(
       if(!verified){
         throw 'Cannot verified the sign'
       }
-      console.log(verified)
+      console.log(isSessionValid.status)
       let profilepic: string = user.profile_pic.split(';base64,').pop() || ''
       let imgBuffer: Buffer = Buffer.from(profilepic, 'base64');
       const client: MongoClient = await clientPromise
       const db: Db = client.db(process.env.MONGODB_DB)
       const collection: Collection = db.collection(process.env.USER_COLLECTION_NAME ?? '')
       const verifyUserAviability: User = (await collection.findOne({"$or":[
-        {"username": data.user.username},
-        {"email": data.user.email}
+        {"username": user.username},
+        {"email": user.email}
       ]})) as User
-      if (verifyUserAviability.username == data.user.username){
-        throw 'Sorry the username is already in use'
-      }
-      if(verifyUserAviability.email == data.user.email) {
-        throw 'Sorry the email is already in use'
+      console.log(verifyUserAviability);
+      if(verifyUserAviability){
+        if (verifyUserAviability.username == user.username){
+          throw 'Sorry the username is already in use'
+        }
+        if(verifyUserAviability.email == user.email) {
+          throw 'Sorry the email is already in use'
+        }
       }
       const compressedImage: Buffer = await CompressImage(imgBuffer);
       const uploadFromBuffer = (image: Buffer) => {
@@ -113,9 +127,11 @@ export default async function handler(
         throw "Cannot signup user to database"
         
       })
+      console.log(user.username)
+
     }catch (error: any){
-      console.log(error)
-      res.status(400).send(error)
+      console.log(error.message)
+      res.status(400).send({error: error.message})
     }      
       break;
     default:

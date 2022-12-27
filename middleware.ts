@@ -1,8 +1,4 @@
-import { PublicKey } from "@solana/web3.js";
-import base58 from "bs58";
-import { NextURL } from "next/dist/server/web/next-url";
 import { NextRequest, NextResponse } from "next/server";
-import nacl from "tweetnacl";
 import { validateToken } from "./src/lib/api/web3auth";
 
 
@@ -14,7 +10,7 @@ export function middleware(req: NextRequest){
     if(!jwt) {
         return NextResponse.redirect('http:localhost:3000/')
     }
-    if(url.includes('/user/my_account')){
+    if(url.includes('/my_account')){
         try {
             const isValid = validateToken({token: jwt, returnData: "Expiration-Time"})
             if(!isValid.status){
@@ -34,5 +30,5 @@ export function middleware(req: NextRequest){
 }
 
 export const config = {
-    matcher: ['/user/my_account', '/api/users/user_account'],
+    matcher: ['/my_account', '/api/users/user_account'],
 }

@@ -55,7 +55,8 @@ function NavBar({className}: Props) {
       console.log(signature)
       return {signature, publicKey}
     } catch (error: any) {
-      throw new Error('Signing message failed' + error.message)
+      handleDisconnect()
+      
     }
   }
   useEffect(() => {
@@ -81,7 +82,7 @@ function NavBar({className}: Props) {
           <Link href={'/explore'} legacyBehavior={true}><a className='active:p-1 lg:active:p-0 hover:text-gray-900 dark:hover:text-violet-500 active:bg-gray-100 active:py-2 lg:active:bg-transparent lg:active:py-0 transition-all ease-in-out duration-100'><li>Explore</li></a></Link>
           <Link href={'/donate'} legacyBehavior={true}><a className='active:p-1 lg:active:p-0 hover:text-gray-900 dark:hover:text-violet-500 active:bg-gray-100 active:py-2 lg:active:bg-transparent lg:active:py-0 transition-all ease-in-out duration-100'><li>Donate</li></a></Link>
           {wallet?.adapter.connected ? 
-            <Link href={'/user/my_account'} legacyBehavior={true}><a className='active:p-1 lg:active:p-0 hover:text-gray-900 dark:hover:text-violet-500 active:bg-gray-100 active:py-2 lg:active:bg-transparent lg:active:py-0 transition-all ease-in-out duration-100'><li>My account</li></a></Link>
+            <Link href={'/my_account'} legacyBehavior={true}><a className='active:p-1 lg:active:p-0 hover:text-gray-900 dark:hover:text-violet-500 active:bg-gray-100 active:py-2 lg:active:bg-transparent lg:active:py-0 transition-all ease-in-out duration-100'><li>My account</li></a></Link>
             :
             null
           }

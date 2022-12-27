@@ -37,7 +37,7 @@ const Explore = () => {
         getUsers()
     }, [])
     return (
-        <div className='h-max flex flex-col justify-center items-center pt-[72px] space-y-20'>
+        <div className='h-max flex flex-col bg-white dark:bg-dark-mode-background-background justify-center items-center pt-[72px] space-y-20'>
             <h2 className='mt-20 text-lg lg:text-xl xl:text-2xl 2xl:text-3xl  w-3/4 lg:w-max text-center text-gray-800 dark:text-white font-bold'>Checkout the streamers working with us</h2>
             <div className=' w-3/4 flex flex-col items-center lg:items-start space-y-10'>
                 <form>

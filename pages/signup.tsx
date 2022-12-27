@@ -13,9 +13,10 @@ function SignUp({}: Props) {
   const [error, setError] = useState<string>('')
   const [index, setIndex] = useState<number>(0);
   const router = useRouter()
-  const handleFinishSignup = (isFinished: boolean, user: string, error?: string) => {
+  const handleFinishSignup = (isFinished: boolean, user: string, error?: string, success?: string) => {
     setIsLoading(false)
     setSignUpFinished(isFinished);
+    console.log(error)
     if(error) {
       setError(error)
       setTimeout(() => {
@@ -24,7 +25,7 @@ function SignUp({}: Props) {
       } , 2000)
       return
     }
-    router.push(`/user/${user}`)
+    router.push(`/my_account`)
   }
   return (
     <div className='flex flex-col  w-full justify-start items-center landscape:2xl:h-[calc(100vh-96px)]'>
@@ -37,7 +38,7 @@ function SignUp({}: Props) {
             </div>
             <LoaderComponent />
           </div>
-          {!error ? 
+          {!error && signUpFinished ? 
           <div className={` flex-col justify-center items-center w-full h-full flex`}>
             <BsCheckCircleFill className='text-green-500 h-7 w-7' />
             <p className='text-gray-500 dark:text-dark-secondary text-lg font-medium mt-5'>Your page is ready</p>
@@ -58,7 +59,7 @@ function SignUp({}: Props) {
         null
       }
       {!isLoading && !signUpFinished ? 
-        <SignupBlock changeFormStep={(idx: number) => setIndex(idx)} idx={index} finishedCallBack={(isFinished: boolean, username: string, status: 'error' | 'success') => handleFinishSignup(isFinished, username, status )} loadingCallBack={(value: boolean) => setIsLoading(value) } />
+        <SignupBlock changeFormStep={(idx: number) => setIndex(idx)} idx={index} finishedCallBack={(isFinished: boolean, user: string, error?: string, success?: string) => handleFinishSignup(isFinished, user, error, success)} loadingCallBack={(value: boolean) => setIsLoading(value) } />
         :
         null
       }

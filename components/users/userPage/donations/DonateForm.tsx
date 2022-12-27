@@ -97,13 +97,13 @@ function DonateForm({username, user_wallet}: {username: string, user_wallet:stri
                 <p className='text-gray-600 dark:text-gray-200 w-full line-clamp-6 font-medium'>Support {username} by donating some Solana. </p>
                 <div className='flex flex-col space-y-5 w-full'>
                     <div className='w-full flex '>
-                        <select className='xl:p-2 landscape:w-24 xl:w-24 rounded-tl-md rounded-bl-md border-r-[1px] dark:border-gray-500 font-medium outline-none text-gray-600 dark:text-gray-200 dark:bg-dark-mode-background-hover-color ' >
+                        <select className='xl:p-2 landscape:w-24 xl:w-24 rounded-tl-md rounded-bl-md border-r-[1px] dark:border-gray-500 font-medium outline-none text-gray-600 dark:text-gray-200 dark:bg-dark-mode-background-hover-color cursor-pointer' >
                             <option value={'SOL'}>SOL</option>
                         </select>
                         <input type={'number'} min={1} step={'0.01'}  value={amountCrypto} onChange={(e) => {setAmountCrypto(e.currentTarget.valueAsNumber), setAmountCurrency(e.currentTarget.valueAsNumber * coinPrice)}}  className='rounded-tr-md rounded-br-md outline-transparent dark:bg-dark-mode-background-hover-color focus:outline-violet-500 transition-all ease-in-out duration-200 w-full p-2'/>
                     </div>
                     <div className='w-full flex'>
-                        <select className='xl:p-2 landscape:w-24 xl:w-24 rounded-tl-md rounded-bl-md border-r-[1px] dark:border-gray-500 font-medium outline-none text-gray-600 dark:text-gray-200 dark:bg-dark-mode-background-hover-color ' aria-expanded={'false'} value={selectedCurrency} onChange={handleCurrencyChange}>
+                        <select className='xl:p-2 landscape:w-24 xl:w-24 rounded-tl-md rounded-bl-md border-r-[1px] dark:border-gray-500 font-medium outline-none text-gray-600 dark:text-gray-200 dark:bg-dark-mode-background-hover-color cursor-pointer' aria-expanded={'false'} value={selectedCurrency} onChange={handleCurrencyChange}>
                             <option value={'usd'}>USD</option>
                             <option value={'cad'}>CAD</option>
                             <option value={'mxn'}>MXN</option>
