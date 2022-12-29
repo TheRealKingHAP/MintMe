@@ -5,34 +5,18 @@ import React, {useEffect, useState} from 'react'
 import { CgSpinner } from 'react-icons/cg'
 import AccountPageLayout from '../../components/layouts/AccountPageLayout'
 import DataChart from '../../components/myAccount/DataChart'
+import useUser from '../../src/hooks/my_account/useUser'
 import { User } from '../../src/models/User'
 
 type Props = {
 
 }
 
-function MyAccount({}: Props) {
-    const [loadingData, setLoadingData] = useState(false)
+function Overview({}: Props) {
     const {wallet, signMessage, publicKey} = useWallet()
-    const [data, setData] = useState<User>()
-    const [error, setError] = useState<string>();
-    const getData = async () => {
-        setLoadingData(true)
-        const res = await fetch('http://localhost:3000/api/users/user_account')
-        const result = await res.json()
-        if(!res.ok || !result){
-            setError('Sorry there was an error')
-            setLoadingData(false);            
-            return
-        }
-        setData(result);
-        setLoadingData(false)
-        return
-    }
-    useEffect(() => {
-      getData()
-    }, [])
-    if(loadingData){
+    const {data, isLoading, error} = useUser()
+
+    if(isLoading){
         return(
             <div className='w-full h-[calc(100vh-96px)]  flex items-center justify-center'>
                 <CgSpinner  className='text-violet-500 w-10 h-10 animate-spin'/>
@@ -70,4 +54,4 @@ function MyAccount({}: Props) {
     )
 }
 
-export default MyAccount
+export default Overview

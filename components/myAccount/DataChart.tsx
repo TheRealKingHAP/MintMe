@@ -10,7 +10,7 @@ type DataChartType = {
 
 function DataChart({qty, title, description, className}: DataChartType) {
   return (
-    <div className='bg-gray-300 text-center dark:bg-dark-mode-background-card-color w-max h-max p-5 rounded-xl'>
+    <div className='bg-gray-100 text-center dark:bg-dark-mode-background-card-color w-max h-max p-5 rounded-xl'>
         <label className='font-bold text-gray-700 dark:text-dark-primary'>{title}</label>
         {description ? 
             <p className='font-light text-gray-500 dark:text-dark-secondary'>{description}</p>

@@ -5,36 +5,20 @@ import AccountPageLayout from '../../components/layouts/AccountPageLayout'
 import NavigationMenu from '../../components/myAccount/NavigationMenu/NavigationMenu'
 import PersonalInfo from '../../components/myAccount/PersonalInfo'
 import { User } from '../../src/models/User'
+import useSWR, {Key, Fetcher} from 'swr'
+import useUser from '../../src/hooks/my_account/useUser'
 
 type Props = {}
 
 function Profile({}: Props) {
-    const [loadingData, setLoadingData] = useState(false)
     const {wallet, signMessage, publicKey} = useWallet()
-    const [data, setData] = useState<User>()
-    const [error, setError] = useState<string>();
-    const getData = async () => {
-        setLoadingData(true)
-        const res = await fetch('http://localhost:3000/api/users/user_account')
-        const result = await res.json()
-        if(!res.ok || !result){
-            setError('Sorry there was an error')
-            setLoadingData(false);            
-            return
-        }
-        setData(result);
-        setLoadingData(false)
-        return
-    }
-    useEffect(() => {
-      getData()
-    }, [])
+    const {data, error, isLoading} = useUser()
+
     const handleDataChanges = async (value: User) => {
-        /*const updatedData: User = value
-        setData(updatedData)*/
+        
         console.log(value)
     }
-    if(loadingData){
+    if(isLoading){
         return(
             <div className='w-full h-[calc(100vh-96px)]  flex items-center justify-center'>
                 <CgSpinner  className='text-violet-500 w-10 h-10 animate-spin'/>

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React, { ReactNode } from 'react'
 import { IconType } from 'react-icons/lib'
 
@@ -11,9 +12,10 @@ type Props = {
 }
 
 function MenuItem({title, icon, path, className, selected}: Props) {
+  const router = useRouter()
   return (
-    <Link href={path}>
-      <a className={`flex items-center justify-between ${selected ? 'bg-dark-mode-background-hover-color' : 'bg-transparent'}   hover:bg-dark-mode-background-hover-color rounded-md p-2 ${className}`}>
+    <Link href={path} passHref>
+      <a className={`flex items-center justify-between ${router.pathname == path ? 'bg-gray-200 dark:bg-dark-mode-background-hover-color' : ''}   hover:bg-gray-200 dark:hover:bg-dark-mode-background-hover-color rounded-md p-2 ${className}`}>
         {icon ? icon : null}
         <span>{title}</span>
       </a>

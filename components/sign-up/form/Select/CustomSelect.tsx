@@ -25,7 +25,7 @@ function CustomSelect({children, openMode ,handleChange, className, title, icon,
     setOpenMenu(false)
   },[selectedOption])
   return (
-    <div id='custom-select' className={`flex justify-between w-full items-center relative ${className}`}>
+    <div id='custom-select' className={`flex ${title ? 'justify-between' : 'justify-center'} w-full items-center relative ${className}`}>
       <div className={`${openMenu ? 'block' : 'hidden'} bg-transparent h-screen w-screen fixed top-0 left-0 z-10`} onClick={() => setOpenMenu(false)} />
       {title ? 
         <p className='font-medium text-gray-800 dark:text-white'>{title}:</p>
