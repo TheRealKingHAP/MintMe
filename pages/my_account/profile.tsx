@@ -20,6 +20,7 @@ type SnackBar = {
 function Profile({}: Props) {
     const {wallet, signMessage, publicKey} = useWallet()
     const {data, error, isLoading, mutate} = useUser()
+    const [updatingInfo, setUpdatingInfo] = useState<boolean>(false);
     const [snackBar, setSnackBar] = useState<SnackBar>({
         status: 'Error',
         message: '',
@@ -51,6 +52,7 @@ function Profile({}: Props) {
     }
     const handleDataChanges = async (value: User) => {
         console.log({profile: value.profile_pic, banner: value.public.banner_img})
+        setUpdatingInfo(true)
         try {
             let signedMessage = await handleSign()
             if(!signedMessage){
@@ -67,9 +69,11 @@ function Profile({}: Props) {
             if(update.ok){
                 const updatedData = await update.json()
                 mutate(updatedData)
+                setUpdatingInfo(false)
             }
             handleSnackBar('Success', 'Changes updated successfully')
         } catch (error: any) {
+            setUpdatingInfo(false)
             handleSnackBar('Error', error.message)
             console.log(error)
             return
@@ -89,7 +93,7 @@ function Profile({}: Props) {
             <div className='w-full bg-white dark:bg-dark-mode-background-background'>
                 {data ?
                     <div className='py-5 flex flex-col items-center text-gray-700 dark:text-white'>
-                        <PersonalInfo user={data} callback={(value: User) => handleDataChanges(value)} />    
+                        <PersonalInfo loading={updatingInfo} user={data} callback={(value: User) => handleDataChanges(value)} />    
                     </div>
                 :
                 null

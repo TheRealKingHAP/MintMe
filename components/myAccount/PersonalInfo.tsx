@@ -1,4 +1,5 @@
 import React, { useState} from 'react'
+import { CgSpinner } from 'react-icons/cg';
 import { User } from '../../src/models/User'
 import SignupImageInput from '../sign-up/form/SignupImageInput';
 import SignupInput from '../sign-up/form/SignupInput'
@@ -6,12 +7,13 @@ import SignupTextAreaInput from '../sign-up/form/SignupTextAreaInput';
 
 type PersonalInfo = {
     user: User,
-    callback: CallableFunction
+    callback: CallableFunction,
+    loading: boolean
 };
-function PersonalInfo({user, callback}: PersonalInfo) {
+function PersonalInfo({user, callback, loading}: PersonalInfo) {
     const [updatedInfo, setUpdatedInfo] = useState<User>(user)
     const [isEditing, setIsEditing] = useState<boolean>(false);
-
+    
     const handleUpdateChanges = () => {
         callback(updatedInfo);
     }
@@ -42,7 +44,10 @@ function PersonalInfo({user, callback}: PersonalInfo) {
                     <SignupImageInput imgStyle='rounded-xl' image={updatedInfo.public.banner_img} handleChange={(value: string) =>{ setUpdatedInfo(prev => ({...prev, public:{...prev.public, banner_img: value}})), handleEdit()}} className='h-36 w-full'/>
                 </div>
             </div>
-            <button onClick={handleUpdateChanges} disabled={isEditing ? false : true} className={`bg-violet-500 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl cursor-pointer w-44 p-2 text-white font-medium`}>Save changes</button>
+            <button onClick={handleUpdateChanges} disabled={isEditing && !loading ? false : true} className={`bg-violet-500 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl flex justify-center cursor-pointer ${loading ? 'w-24' : 'w-44'} p-2 text-white font-medium transition-all ease-in-out duration-150`}>
+                <CgSpinner className={`${loading ? 'block' : 'hidden'} animate-spin text-xl`} />
+                <span className={`${loading ? 'hidden' : 'block'}`}>Save changes</span>
+            </button>
         </div>
     )
 }
