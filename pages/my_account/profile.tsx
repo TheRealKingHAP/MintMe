@@ -7,16 +7,74 @@ import PersonalInfo from '../../components/myAccount/PersonalInfo'
 import { User } from '../../src/models/User'
 import useSWR, {Key, Fetcher} from 'swr'
 import useUser from '../../src/hooks/my_account/useUser'
+import { useRouter } from 'next/router'
+import {sign} from 'tweetnacl';
+import SnackBar from '../../components/notifications/SnackBar'
 
 type Props = {}
-
+type SnackBar = {
+    status: 'Error' | 'Success',
+    message: string,
+    isVisible: boolean
+}
 function Profile({}: Props) {
     const {wallet, signMessage, publicKey} = useWallet()
-    const {data, error, isLoading} = useUser()
-
+    const {data, error, isLoading, mutate} = useUser()
+    const [snackBar, setSnackBar] = useState<SnackBar>({
+        status: 'Error',
+        message: '',
+        isVisible: false
+    })
+    const router = useRouter();
+    const handleSnackBar = (status: 'Error' | 'Success', message: string) => {
+        setSnackBar({
+            status: status,
+            message: message,
+            isVisible: true
+        })
+        setTimeout(() => {
+            setSnackBar((prev) => ({...prev, isVisible: false}))
+        }, 3000);
+    }
+    const handleSign = async () =>{
+        try {
+          if(!publicKey) throw new Error('Wallet not connected')
+          if(!signMessage) throw new Error('Wallet does not support message siging!')
+          const message = new TextEncoder().encode('Please sign this message to complete sign up');
+          const signature = await signMessage(message);
+          const provider = wallet?.adapter.name
+          if(!sign.detached.verify(message, signature, publicKey.toBytes())) throw new Error('Invalid signature!');
+          return {signature, publicKey, provider}
+        } catch (error: any) {
+            console.log(error.message)
+        }
+    }
     const handleDataChanges = async (value: User) => {
-        
-        console.log(value)
+        console.log({profile: value.profile_pic, banner: value.public.banner_img})
+        try {
+            let signedMessage = await handleSign()
+            if(!signedMessage){
+                throw Error('Sorry, please sign the message')
+            }
+            const update = await fetch(`${router.basePath}/api/users/updateUser`, {
+                body: JSON.stringify({user: value, signedMessage}),
+                method: 'POST'
+            })
+            if(!update.ok){
+                let error = await update.text()
+                throw Error(error)
+            }
+            if(update.ok){
+                const updatedData = await update.json()
+                mutate(updatedData)
+            }
+            handleSnackBar('Success', 'Changes updated successfully')
+        } catch (error: any) {
+            handleSnackBar('Error', error.message)
+            console.log(error)
+            return
+        }
+        return
     }
     if(isLoading){
         return(
@@ -27,6 +85,7 @@ function Profile({}: Props) {
     }
     return (
         <AccountPageLayout selectedOptionMenu={1}>
+            <SnackBar isVisible={snackBar.isVisible} status={snackBar.status} message={snackBar.message}/>
             <div className='w-full bg-white dark:bg-dark-mode-background-background'>
                 {data ?
                     <div className='py-5 flex flex-col items-center text-gray-700 dark:text-white'>

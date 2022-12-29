@@ -48,6 +48,33 @@ function convertToUint8Array (provider: string, signature: any) {
       return Uint8Array.from(Object.values(signature))
   }
 }
+const uploadFromBuffer = (image: Buffer, path: string) => {
+    return new Promise<UploadApiResponse | UploadApiErrorResponse>((resolve, reject) => {
+      let cloudinary_upload_stream = cloudinary.uploader.upload_stream(
+        {
+          folder: path,
+        },
+        (error, result) => {
+          if(result){
+            resolve(result);
+          }else{
+            reject(error)
+          }
+        }
+      );
+      streamifier.createReadStream(image).pipe(cloudinary_upload_stream);
+    });
+};
+const deleteImageFromCloud = async (public_id: string) => {
+  let result = await cloudinary.uploader.destroy(public_id, (error, res) => {
+    if(res){
+      console.log(res)
+    }else{
+      console.log(error)
+    }
+  })
+  return result
+}
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<string | Error | Object>
@@ -69,6 +96,7 @@ export default async function handler(
       }
       let data: ReqData = JSON.parse(req.body);
       let user: User = data.user
+      let id = new ObjectId(user._id);
       let signedMessage = data.signedMessage
       let publicKey = new PublicKey(signedMessage.publicKey)
       //Convert signature passed from Client to Uint8Array and Verify the sign
@@ -77,64 +105,59 @@ export default async function handler(
       if(!verified){
         throw 'Cannot verified the sign'
       }
-      console.log(isSessionValid.status)
-      let profilepic: string = user.profile_pic.split(';base64,').pop() || ''
-      let imgBuffer: Buffer = Buffer.from(profilepic, 'base64');
       const client: MongoClient = await clientPromise
       const db: Db = client.db(process.env.MONGODB_DB)
       const collection: Collection = db.collection(process.env.USER_COLLECTION_NAME ?? '')
-      const verifyUserAviability: User = (await collection.findOne({"$or":[
-        {"username": user.username},
-        {"email": user.email}
-      ]})) as User
-      console.log(verifyUserAviability);
-      if(verifyUserAviability){
-        if (verifyUserAviability.username == user.username){
-          throw 'Sorry the username is already in use'
-        }
-        if(verifyUserAviability.email == user.email) {
-          throw 'Sorry the email is already in use'
-        }
-      }
-      const compressedImage: Buffer = await CompressImage(imgBuffer);
-      const uploadFromBuffer = (image: Buffer) => {
-        return new Promise<UploadApiResponse | UploadApiErrorResponse>((resolve, reject) => {
-          let cloudinary_upload_stream = cloudinary.uploader.upload_stream(
-            {
-              folder: `MintMe/${user._id}`,
-            },
-            (error, result) => {
-              if(result){
-                resolve(result);
-              }else{
-                reject(error)
-              }
-            }
-          );
-          streamifier.createReadStream(image).pipe(cloudinary_upload_stream);
-        });
-      };
-      let result= await uploadFromBuffer(compressedImage)
-      .then((data) => {
-        user = {...user, profile_pic: data.secure_url}
-      }).catch((error) => {
-        throw "Cannot Upload Image"
-        
-      })
-      const addUser = await collection.insertOne(user)
-      .then((result) => res.status(200).json('Success Signup'))
-      .catch((error) => {
-        throw "Cannot signup user to database"
-        
-      })
-      console.log(user.username)
+      const prevData: User = (await collection.findOne({"_id": id})) as User
 
+      //Only do mutation if the user change the images
+      if(prevData.profile_pic != user.profile_pic){
+        let profilepic: string = user.profile_pic.split(';base64,').pop() || '';
+        let profilePicBuffer: Buffer = Buffer.from(profilepic, 'base64');
+        const compressedProfileImage: Buffer = await CompressImage(profilePicBuffer);
+        let result = await uploadFromBuffer(compressedProfileImage, `MintMe/${user._id}`)
+        .then((data) => {
+          user = {...user, profile_pic: data.secure_url}
+        }).catch((error) => {
+          throw "Cannot Upload Image"
+          
+        })
+        const public_id = 'MintMe'+prevData.profile_pic.split(`MintMe`).pop()?.split('.').reverse().pop()
+        let deletePrev = await deleteImageFromCloud(public_id || prevData.profile_pic)
+      }
+      if(prevData.public.banner_img != user.public.banner_img){
+        let bannerImg: string = user.public.banner_img.split(';base64,').pop() || '';
+        let bannerImgBuffer: Buffer = Buffer.from(bannerImg, 'base64');
+        const compressedBannerImg: Buffer = await CompressImage(bannerImgBuffer);
+        let result = await uploadFromBuffer(compressedBannerImg, `MintMe/${user._id}`)
+        .then((data) => {
+          user = {...user, public:{...user.public, banner_img: data.secure_url}}
+        }).catch((error) => {
+          throw "Cannot Upload Image"
+          
+        })
+        const public_id = 'MintMe'+prevData.public.banner_img.split(`MintMe`).pop()?.split('.').reverse().pop()
+        let deletePrev = await deleteImageFromCloud(public_id || prevData.public.banner_img)
+      }
+      
+      const updateUser = await collection.updateOne({"_id": id}, {"$set": {
+        "_id": id,
+        "username": user.username,
+        "email": user.email,
+        "profile_pic": user.profile_pic,
+        "country": user.country,
+        "public": user.public
+      }})
+      .then((result) => res.status(200).json(user))
+      .catch((error) => {
+        throw 'Cannot update user'
+      })
     }catch (error: any){
-      console.log(error.message)
-      res.status(400).send({error: error.message})
+      console.log(error)
+      res.status(400).send(error)
     }      
       break;
     default:
-        res.status(400).send({error: 'Sorry there was an error'});
+        res.status(400).send('Sorry there was an error');
   }
 }

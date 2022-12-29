@@ -18,7 +18,7 @@ function UserBanner({username, profile_pic, banner_img, social_media } : UserBan
         <div className='w-full flex flex-col items-center relative'>
         {(!banner_img) ? <div className='w-full bg-slate-300 h-96'></div> 
         :
-        <div className='w-full bg-green-300 h-96 relative'>
+        <div className='w-full h-96 relative'>
           <Image src={banner_img} layout='fill' objectFit='cover' />
         </div>
         }
