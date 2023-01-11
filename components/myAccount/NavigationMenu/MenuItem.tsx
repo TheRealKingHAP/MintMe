@@ -14,7 +14,7 @@ type Props = {
 function MenuItem({title, icon, path, className, selected}: Props) {
   const router = useRouter()
   return (
-    <Link href={path} passHref>
+    <Link href={path} legacyBehavior>
       <a className={`flex items-center justify-between ${router.pathname == path ? 'bg-gray-200 dark:bg-dark-mode-background-hover-color' : ''}   hover:bg-gray-200 dark:hover:bg-dark-mode-background-hover-color rounded-md p-2 ${className}`}>
         {icon ? icon : null}
         <span>{title}</span>

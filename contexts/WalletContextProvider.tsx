@@ -14,6 +14,9 @@ const WalletContextProvider : FC<{children: ReactNode}> = ({children}) => {
         new SolflareWalletAdapter()
     ], []);
     const onError = useCallback( (error: WalletError) => {
+        fetch('api/auth/logout', {
+            method: 'DELETE'
+        })
         console.error(error);
     }, []);
     return (

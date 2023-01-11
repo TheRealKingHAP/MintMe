@@ -13,8 +13,8 @@ import DonateForm from '../../components/users/userPage/donations/DonateForm'
 import DonationBlock from '../../components/users/userPage/donations/DonationBlock'
 import FeedBio from '../../components/users/userPage/FeedBio'
 import UserBanner from '../../components/users/userPage/UserBanner'
+import { Donation } from '../../src/models/Donation'
 import { User } from '../../src/models/User'
-import { Donation } from '../../types/users/userPage/donation/DonationType'
 import { UserType } from '../../types/users/UserType'
 
 function UserPage() {
@@ -68,7 +68,7 @@ function UserPage() {
         </div>
         <div id='' className='flex-1'>
           {user ? 
-            <DonateForm username={user.username} user_wallet={user.public.public_wallet} />
+            <DonateForm id={user._id?.toString() || ''} username={user.username} user_wallet={user.public.public_wallet} />
           :
             <SkeletonDonationForm />
           }

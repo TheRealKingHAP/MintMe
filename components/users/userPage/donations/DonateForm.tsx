@@ -1,6 +1,7 @@
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
-import { PublicKey, LAMPORTS_PER_SOL, Transaction, SystemProgram } from '@solana/web3.js';
+import { PublicKey, LAMPORTS_PER_SOL, Transaction, SystemProgram, Keypair, sendAndConfirmTransaction, RpcResponseAndContext, SignatureResult } from '@solana/web3.js';
+import { useRouter } from 'next/router';
 import React, {SetStateAction, useState, useEffect, useCallback} from 'react'
 import { AiOutlineLoading } from 'react-icons/ai';
 import { CoinPrice, Currency } from '../../../../types/users/userPage/donation/CoinPriceType';
@@ -10,10 +11,11 @@ interface TransactionStatus{
     status: 'Success' | 'Error',
     message: string,
 }
-function DonateForm({username, user_wallet}: {username: string, user_wallet:string | PublicKey}) {
+function DonateForm({username, user_wallet, id}: {username: string, user_wallet:string | PublicKey, id: string}) {
     const [coinPrice, setCoinPrice] = useState(0);
     const {connection} = useConnection()
-    const {wallet, publicKey, signMessage, sendTransaction} = useWallet()
+    const router = useRouter()
+    const {wallet, publicKey, sendTransaction, signTransaction} = useWallet()
     const [transactionStatus, setTransactionStatus] = useState<TransactionStatus>();
     const [showSnackbar, setShowSnackbar] = useState<boolean>(false)
     const {setVisible} = useWalletModal()
@@ -60,31 +62,52 @@ function DonateForm({username, user_wallet}: {username: string, user_wallet:stri
             return
         }
         try {
+            //Client-side
             setIsLoading(true)
+            //Streamer or influencer Public Key
             const receiverPublicKey = new PublicKey(user_wallet);
-            const amount = qty * LAMPORTS_PER_SOL;
-            const transaction = new Transaction().add(
-                SystemProgram.transfer({
-                    fromPubkey: publicKey,
-                    toPubkey: receiverPublicKey,
-                    lamports: amount
-                })
-            )
-            const latestBlockHash = await connection.getLatestBlockhash() 
-            const signature = await sendTransaction(transaction, connection);
-            connection.confirmTransaction({
-                blockhash: latestBlockHash.blockhash,
-                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-                signature: signature
-            }).then((value) => {
-                setIsLoading(false)
-                setTransactionStatus({status: 'Success', message: 'Successful donation, thank you!'})
-                ShowSnackbar()
+            //Fee Collector Public Key
+            const feeCollector = new PublicKey('EVU5vd36z6MBL8RJaqwsTUVxxKMXCX6d6XyqAAi2SG9Z')
+            //Total donation
+            const amount = qty * LAMPORTS_PER_SOL;            
+            //Send and request the transaction to the back-end with the desire values
+            const res = await fetch(`${router.basePath}/api/donations/make_donation`, {
+                method: 'POST',
+                body: JSON.stringify({amount, receiverPublicKey, id, donator: publicKey})
+            });
+            if(!res.ok){
+                throw Error('Sorry there was an error')
+            }
+            //Get response from server with the transaction pre-signed
+            const result = await res.json();
+            let recoveredTx: Transaction =  Transaction.from(Buffer.from(result));
+            //Sign the transaction with the wallet adapter
+            recoveredTx = await signTransaction!(recoveredTx);
+            //Send the serialized transaction
+            const final_Tx = await connection.sendRawTransaction(recoveredTx.serialize({requireAllSignatures: false}))
+            const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash()
+            //Confirm the transaction in the blockchain
+            await connection.confirmTransaction({
+                blockhash: blockhash,
+                lastValidBlockHeight: lastValidBlockHeight,
+                signature: final_Tx
             })
+            const saveTx = await fetch(`${router.basePath}/api/donations/save_donation`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    receiver: id,
+                    signature: final_Tx
+                })
+            });
+            if(!saveTx.ok){
+                throw Error('Something went wrong with the transaction')
+            }
+            setIsLoading(false)
+            setTransactionStatus({status: 'Success', message: 'Donation complete!'})
+            ShowSnackbar()
             return
         } catch (error: any) {
             setIsLoading(false)
-            console.log('error', `Transaction failed! ${error?.message}`);
             setTransactionStatus({status: 'Error', message: error.message})
             ShowSnackbar()
             return;

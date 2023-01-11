@@ -17,6 +17,9 @@ function NavigationMenu({}: Props) {
   ]
   const router = useRouter()
   const handleMenuClick = (route: string) => {
+    if(router.pathname == route){
+      return;
+    }
     router.push(route)
   }
   const getCurrentPath = () => {

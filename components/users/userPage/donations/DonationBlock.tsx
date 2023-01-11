@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Donation } from '../../../../types/users/userPage/donation/DonationType'
+import { Donation } from '../../../../src/models/Donation';
 import DonationTile from './DonationTile'
 
 function DonationBlock({donations}: {donations: Donation[]}) {
@@ -38,7 +38,7 @@ function DonationBlock({donations}: {donations: Donation[]}) {
         <div id='DonationListScroll' className='overflow-scroll overflow-x-hidden md:pr-2 space-y-5'>
           
         { donations && donations.length > 0 ? donations.map((donation, index) => (
-            <DonationTile id={donation.id} sender={donation.sender} receiver={donation.receiver} amount={donation.amount} date={donation.date} key={index}/>
+            <DonationTile id={donation.id} message={''} _id={donation._id} sender={donation.sender} receiver={donation.receiver} amount={donation.amount} date={donation.date} key={index}/>
         ))
         :
         <p className='font-semibold text-gray-700 dark:text-gray-50 text-base lg:text-lg xl:text-xl'>No donations</p>

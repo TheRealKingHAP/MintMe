@@ -18,7 +18,6 @@ export default async function handler(
   switch(req.method) {
     case 'GET':
         try{
-          //const {pubKey} = JSON.parse(req.body);
           //const authHeader = req.headers.authorization;
           const {cookies} = req;
           const jwt = cookies.MintMeJWT;
@@ -36,7 +35,7 @@ export default async function handler(
           const user: User = (await collection.findOne({"public.public_wallet": `${publicKey}`})) as User
           res.status(200).json(user)
         } catch (error) {
-            res.status(400).json({error})
+            res.status(400).send({error})
         }
 
         break;
