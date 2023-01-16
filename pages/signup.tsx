@@ -25,7 +25,7 @@ function SignUp({}: Props) {
       } , 2000)
       return
     }
-    router.push(`/my_account`)
+    router.push(`/my_account/overview`)
   }
   return (
     <div className='flex flex-col  w-full justify-start items-center landscape:2xl:h-[calc(100vh-96px)]'>

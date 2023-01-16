@@ -1,7 +1,5 @@
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
-import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, {useEffect, useState} from 'react'
 import { CgSpinner } from 'react-icons/cg'
@@ -10,10 +8,10 @@ import DataChart from '../../components/myAccount/DataChart'
 import DonationBlock from '../../components/users/userPage/donations/DonationBlock'
 import Fee_Collector from '../../constants/fee_collector'
 import useUser from '../../src/hooks/my_account/useUser'
-import getTransactions from '../../src/lib/solana/getTransactions'
 import { Donation } from '../../src/models/Donation'
-import { SolanaParsedInstruction } from '../../src/models/SolanaParsedInstruction'
-import { User } from '../../src/models/User'
+import useSWR from 'swr';
+import useDonations from '../../src/hooks/my_account/useDonations'
+import Link from 'next/link'
 
 type Props = {
 
@@ -21,51 +19,12 @@ type Props = {
 
 function Overview({}: Props) {
     const {wallet, signMessage, publicKey} = useWallet()
+    const router = useRouter()
     const {data, isLoading, error} = useUser()
     const {connection} = useConnection()
     const fee_collector = new Fee_Collector();
-    const [donations, setDonations] = useState<Donation[]>([]);
-    const transactions = async () => {
-        let txList: SolanaParsedInstruction[] = await getTransactions({
-            connection: connection,
-            toPublicKey: publicKey || new PublicKey(''),
-            fromPublicKey: fee_collector.publicKey,
-            options:{
-                limit: 10
-            }
-        }) as SolanaParsedInstruction[]
-        if(txList){
-            let donationList: Donation[] = [];
-            txList.map((tx, index) => {
-                let donation: Donation = {
-                    amount: tx.info.lamports / LAMPORTS_PER_SOL,
-                    message: '',
-                    sender: 'Anonymous',
-                    receiver: {
-                        address: tx.info.destination.toString(),
-                        id: {$oid: ''}
-                    },
-                    date: ''
-                }
-                donationList.push(donation);
-            })
-            setDonations(donationList);
-        }
-        return
-    }
-    useEffect(()=>{
-        if(publicKey){
-            transactions()
-        }
-    }, [publicKey])
-    if(!publicKey){
-        return(
-            <div className='py-5 flex flex-col h-[calc(100vh-96px)]  justify-center items-center space-y-12 text-gray-700 dark:text-white'>
-                <h3 className='text-gray-800 font-semibold text-lg dark:text-white'>Please Log in!</h3>
-            </div>
-        )
-    }
-    if(isLoading){
+    const donations = useDonations(data?._id?.toString() || '');
+    if(isLoading || donations.isLoading || !publicKey){
         return(
             <div className='w-full h-[calc(100vh-96px)]  flex items-center justify-center'>
                 <CgSpinner  className='text-violet-500 w-10 h-10 animate-spin'/>
@@ -75,7 +34,7 @@ function Overview({}: Props) {
     return (
         <AccountPageLayout selectedOptionMenu={0}>
             <div className='w-full bg-white dark:bg-dark-mode-background-background'>
-                {data ?
+                {data && donations.data ?
                     <div className='py-5 flex flex-col items-center space-y-12 text-gray-700 dark:text-white'>
                         <section className='flex flex-col items-center space-y-12'>
                             <h4 className='font-bold text-2xl'>Hello, {data?.username}</h4>
@@ -87,12 +46,16 @@ function Overview({}: Props) {
                             <DataChart qty={150} title='Total donations' description='(30 days)' className='' />
                             <DataChart qty={25} title='Top donation'/>
                         </section>
-
-                            <DonationBlock donations={donations} />
+                        <section className='w-3/4 landscape:2xl:w-1/3'>
+                            <DonationBlock title='Donations' donations={donations.data} />
+                        </section>
                         
                     </div>
                 :
-                null
+                <div className='py-5 flex flex-col h-[calc(100vh-96px)]  justify-center items-center space-y-12 text-gray-700 dark:text-white'>
+                    <h3 className='text-gray-800 font-semibold text-lg dark:text-white'>Please create an account first</h3>
+                    <Link href={'/signup'}><a className='p-2 rounded-md bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-semibold'>Create my page</a></Link>
+                </div>
                 }
                 {error ?
                     <div className='py-5 flex flex-col h-[calc(100vh-96px)]  justify-center items-center space-y-12 text-gray-700 dark:text-white'>

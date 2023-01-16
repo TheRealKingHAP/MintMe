@@ -10,6 +10,7 @@ import useUser from '../../src/hooks/my_account/useUser'
 import { useRouter } from 'next/router'
 import {sign} from 'tweetnacl';
 import SnackBar from '../../components/notifications/SnackBar'
+import Link from 'next/link'
 
 type Props = {}
 type SnackBar = {
@@ -96,7 +97,10 @@ function Profile({}: Props) {
                         <PersonalInfo loading={updatingInfo} user={data} callback={(value: User) => handleDataChanges(value)} />    
                     </div>
                 :
-                null
+                <div className='py-5 flex flex-col h-[calc(100vh-96px)]  justify-center items-center space-y-12 text-gray-700 dark:text-white'>
+                    <h3 className='text-gray-800 font-semibold text-lg dark:text-white'>Please create an account first</h3>
+                    <Link href={'/signup'}><a className='p-2 rounded-md bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-semibold'>Create my page</a></Link>
+                </div>
                 }
                 {error ?
                     <div className='py-5 flex flex-col h-[calc(100vh-96px)]  justify-center items-center space-y-12 text-gray-700 dark:text-white'>

@@ -78,13 +78,15 @@ function DonateForm({username, user_wallet, id}: {username: string, user_wallet:
             if(!res.ok){
                 throw Error('Sorry there was an error')
             }
-            //Get response from server with the transaction pre-signed
+            //Get response from server with the transaction partial-signed
             const result = await res.json();
             let recoveredTx: Transaction =  Transaction.from(Buffer.from(result));
             //Sign the transaction with the wallet adapter
             recoveredTx = await signTransaction!(recoveredTx);
             //Send the serialized transaction
-            const final_Tx = await connection.sendRawTransaction(recoveredTx.serialize({requireAllSignatures: false}))
+            const final_Tx = await connection.sendRawTransaction(recoveredTx.serialize({requireAllSignatures: false}), {
+                maxRetries: 5
+            })
             const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash()
             //Confirm the transaction in the blockchain
             await connection.confirmTransaction({

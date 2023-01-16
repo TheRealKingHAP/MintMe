@@ -79,7 +79,9 @@ export default async function handler(
       }
       console.log(isSessionValid.status)
       let profilepic: string = user.profile_pic.split(';base64,').pop() || ''
+      let bannerImg: string = user.public.banner_img.split(';base64,').pop() || ''
       let imgBuffer: Buffer = Buffer.from(profilepic, 'base64');
+      let bannerBuffer: Buffer = Buffer.from(bannerImg, 'base64');
       const client: MongoClient = await clientPromise
       const db: Db = client.db(process.env.MONGODB_DB)
       const collection: Collection = db.collection(process.env.USER_COLLECTION_NAME ?? '')
@@ -97,6 +99,7 @@ export default async function handler(
         }
       }
       const compressedImage: Buffer = await CompressImage(imgBuffer);
+      const compressedBanner: Buffer = await CompressImage(bannerBuffer);
       const uploadFromBuffer = (image: Buffer) => {
         return new Promise<UploadApiResponse | UploadApiErrorResponse>((resolve, reject) => {
           let cloudinary_upload_stream = cloudinary.uploader.upload_stream(
@@ -114,9 +117,16 @@ export default async function handler(
           streamifier.createReadStream(image).pipe(cloudinary_upload_stream);
         });
       };
-      let result= await uploadFromBuffer(compressedImage)
+      let uploadProfilePic= await uploadFromBuffer(compressedImage)
       .then((data) => {
         user = {...user, profile_pic: data.secure_url}
+      }).catch((error) => {
+        throw "Cannot Upload Image"
+        
+      })
+      let uploadBannerImg= await uploadFromBuffer(compressedBanner)
+      .then((data) => {
+        user = {...user, public: {...user.public, banner_img: data.secure_url}}
       }).catch((error) => {
         throw "Cannot Upload Image"
         

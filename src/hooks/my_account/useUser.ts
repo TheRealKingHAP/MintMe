@@ -14,8 +14,8 @@ function useUser() {
      }
      return res.json()
     };
-    const {data, isLoading, error, } = useSWR(uid, fetcher);
-    return {data, isLoading, error}
+    const {data, isLoading, error, mutate} = useSWR(uid, fetcher);
+    return {data, isLoading, error, mutate}
 }
 
 export default useUser

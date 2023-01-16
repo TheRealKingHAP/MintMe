@@ -87,7 +87,7 @@ function NavBar({className}: Props) {
             null
           }
           {!wallet?.adapter.connected ? 
-          <li><NavBarElement className={'hover:text-gray-900 dark:hover:text-violet-500 transition-all ease-in-out duration-100'} label='Log in' onClickFunction={!wallet ? onRequestConnectWallet : redirectProfile}/></li>
+          <li><NavBarElement className={'hover:text-gray-900 dark:hover:text-violet-500 transition-all ease-in-out duration-100'} label='Log in' onClickFunction={!publicKey ? onRequestConnectWallet : redirectProfile}/></li>
           :
           <li className=''>
             <div className='flex space-x-5 items-center'>

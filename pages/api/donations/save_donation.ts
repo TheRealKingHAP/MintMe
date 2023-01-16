@@ -17,7 +17,6 @@ export default async function handler (
                 //Server-side
                 const TxData = JSON.parse(req.body);
                 const {receiver, signature}: DonationDbSchema = TxData;
-                //Get Tx1 data from client
                 const client: MongoClient = await clientPromise;
                 const db: Db = client.db(process.env.MONGODB_DB);
                 const collection: Collection = db.collection(process.env.DONATION_COLLECTION_NAME ?? '');

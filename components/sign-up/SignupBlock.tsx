@@ -93,6 +93,7 @@ function SignupBlock({loadingCallBack, finishedCallBack, idx, changeFormStep}: P
           <div id='PersonalInfo' className='space-y-12 mt-5 flex flex-col items-center w-full'>
             <SignupInput title='E-mail' inputType='email' inputValue={data.email} handleChange={(value: string) => setData({...data, email: value}) }/>
             <SignupInput title='Username' inputType='text' inputValue={data.username} handleChange={(value:string) => setData({...data, username: value})}/>
+            <SignupTextAreaInput title='About' inputValue={data.public.feed.bio.description} handleChange={(value: string) => setData(changeBioData('description', value))} className={'border-2 border-gray-300 dark:bg-dark-mode-background-card-color dark:border-transparent dark:placeholder:text-gray-200 rounded-3xl p-2 h-28 w-full focus:border-violet-400 outline-none resize-none'}/>
             <SignupSelectCountry value={data.country} handleChange={(value:Country) => setData({...data, country: value})} />
           </div>
         )
@@ -101,8 +102,11 @@ function SignupBlock({loadingCallBack, finishedCallBack, idx, changeFormStep}: P
           <div id='Bio' className='space-y-12 flex flex-col mt-5 items-center w-full'>
             <SignupImageInput image={data.profile_pic} username={data.username} handleChange={(value: string) => setData(prev => ({...prev, profile_pic: value}))} />
             <SignupInput title='Greetings!' inputType='text' inputValue={data.public.feed.bio.introduction} handleChange={(value: string) => setData(changeBioData('introduction', value))} />
-            <SignupTextAreaInput title='About' inputValue={data.public.feed.bio.description} handleChange={(value: string) => setData(changeBioData('description', value))} className={'border-2 border-gray-300 dark:bg-dark-mode-background-card-color dark:border-transparent dark:placeholder:text-gray-200 rounded-3xl p-2 h-28 w-full focus:border-violet-400 outline-none resize-none'}/>
             <SignupSelectPlatform value={data.public.main_platform} handleChange={(value:Platform) => setData({...data, public:{...data.public, main_platform: value}})}/>
+            <div id='Banner' className='space-y-5 w-full'>
+                    <p className='text-violet-400 '>Banner</p>
+                    <SignupImageInput imgStyle='rounded-xl' image={data.public.banner_img} handleChange={(value: string) =>{ setData(prev => ({...prev, public:{...prev.public, banner_img: value}}))}} className='h-36 w-full'/>
+            </div>
           </div>
         )
       case 2:

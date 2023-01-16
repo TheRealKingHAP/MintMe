@@ -61,7 +61,7 @@ function UserPage() {
             <SkeletonUserFeed />
           }
           <div className='space-y-5'>
-          {(donations.length > 0 && !donationsLoading) ? <DonationBlock donations={donations}/> : null}
+          {(donations.length > 0 && !donationsLoading) ? <DonationBlock title='Top donations' donations={donations}/> : null}
           {donationsLoading && <SkeletonDonationBlock />}
           {(!donationsLoading && donations.length <= 0) ? <div className='font-semibold text-gray-600 dark:text-gray-200 text-xl text-center'>No donations</div>: null}
           </div>

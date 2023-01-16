@@ -4,12 +4,19 @@ import { ErrorInfo } from 'react';
 import { User } from '../../../src/models/User';
 import clientPromise from '../../../src/services/database.service';
 import { Donation } from '../../../src/models/Donation';
+import { DonationDbSchema } from '../../../src/models/DonationDbSchema';
+import { SolanaParsedInstruction } from '../../../src/models/SolanaParsedInstruction';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { MintMe } from '../../../src/lib/solana/mintMe';
 
 const {MONGODB_DB, DONATION_COLLECTION_NAME, USER_COLLECTION_NAME} = process.env;
 type Error = {
   error: string | unknown  
 }
-
+type DonationRequest = {
+  userId: string,
+  option?: 'TOP' | 'ALL'
+}
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Donation[] | Error>
@@ -17,12 +24,30 @@ export default async function handler(
   switch(req.method) {
     case 'GET':
         try{
-            const {userId} = req.query;
-            const mongoId = new ObjectId(userId?.toString())
+            const {userId}: DonationRequest = req.query as DonationRequest;
+            const mongoId = new ObjectId(userId)
             const client: MongoClient = await clientPromise
             const db: Db = client.db(MONGODB_DB)
             const collection: Collection = db.collection(DONATION_COLLECTION_NAME ?? '')
-            const donations: Donation[] = (await collection.find({"receiver.id": mongoId}).sort({"amount": -1}).limit(10).toArray()) as Donation[]
+            const donationsSchema: DonationDbSchema[] = (await collection.find({"receiver": mongoId}).sort({"amount": -1}).limit(10).toArray()) as DonationDbSchema[]
+            let signatures: string[] = []
+            donationsSchema.map((donation) => {
+              signatures.push(donation.signature)
+            })
+            let parsedDonations = await MintMe().getTransactionsFromSignatures(signatures);
+            let donations: Donation[] = []
+            parsedDonations.map((data) => {
+              donations.push({
+                amount: data.info.lamports / LAMPORTS_PER_SOL,
+                date: '',
+                message: '',
+                sender: data.info.source.toString(),
+                receiver: {
+                  id: {$oid: ''},
+                  address: data.info.destination.toString()
+                }
+              })
+            })
             res.status(200).json(donations)
         } catch (error) {
             res.status(400).json({error})
