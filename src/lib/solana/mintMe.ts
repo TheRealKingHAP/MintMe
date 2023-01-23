@@ -9,8 +9,12 @@ export function MintMe() {
         const transactions: (ParsedTransactionWithMeta | null)[] = await connection.getParsedTransactions(signatures);
         let parsedInstructions: SolanaParsedInstruction[] = []
         transactions.map((tx) => {
+            const date = new Date((tx?.blockTime as number) * 1000);
             let parsedInstruction: ParsedInstruction = tx?.transaction.message.instructions[1] as ParsedInstruction
-            let filteredTxInfo: SolanaParsedInstruction = parsedInstruction.parsed;
+            let filteredTxInfo: SolanaParsedInstruction = {
+                ...parsedInstruction.parsed,
+                date: date
+            }
             parsedInstructions.push(filteredTxInfo);
         })
         

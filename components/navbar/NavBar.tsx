@@ -73,6 +73,7 @@ function NavBar({className}: Props) {
               <Image src={'/mintMeMain.svg'} alt={'Logo'} layout='fill' objectFit='contain' />
             </div>
             <span>MintMe</span>
+            <div id='Beta-tag' className='text-xs font-light border-2 border-green-500 rounded-md p-1 text-green-500'>Beta</div>
           </a>
         </Link>
         <HiMenu className={` ${isActive ? 'hidden' : 'block'} lg:hidden h-7 w-7 text-gray-700 dark:text-white`} onClick={() => {setIsActive(true)}} />

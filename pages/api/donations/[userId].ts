@@ -39,7 +39,8 @@ export default async function handler(
             parsedDonations.map((data) => {
               donations.push({
                 amount: data.info.lamports / LAMPORTS_PER_SOL,
-                date: '',
+                //Convert Date Object to Month/Day/Year
+                date: `${data.date.getUTCMonth()+1}/${data.date.getUTCDate()}/${data.date.getFullYear()}`,
                 message: '',
                 sender: data.info.source.toString(),
                 receiver: {

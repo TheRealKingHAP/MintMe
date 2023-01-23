@@ -3,7 +3,7 @@ import { Donation } from '../../../../src/models/Donation';
 import DonationTile from './DonationTile'
 
 function DonationBlock({donations, title}: {donations: Donation[], title: string}) {
-  const [orderBy, setOrderBy] = useState('amount');
+  const [orderBy, setOrderBy] = useState('date_newest');
   const handleChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
     setOrderBy(event.currentTarget.value);
   } 
