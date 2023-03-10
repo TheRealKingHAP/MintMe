@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
 import { WalletError, WalletAdapterNetwork } from '@solana/wallet-adapter-base'
@@ -16,17 +16,11 @@ const WalletContextProvider : FC<{children: ReactNode}> = ({children}) => {
     const network = WalletAdapterNetwork.Devnet;
     const endpoint = useMemo(() => clusterApiUrl(network),[network])
     const wallets = useMemo(() => [
-        new PhantomWalletAdapter(),
         new SolflareWalletAdapter(),
-        new CoinbaseWalletAdapter()
     ], []);
     const onError = useCallback( async (error: WalletError) => {
-        switch(error.error.code){
-            case 4001:
-                await handleLogOut()
-                break;
-        }
-        console.error(error.error.code);
+       
+        console.error(error);
     }, []);
     return (
         <ConnectionProvider endpoint={endpoint}>

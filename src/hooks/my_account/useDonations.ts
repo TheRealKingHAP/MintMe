@@ -12,7 +12,9 @@ function useDonations(id: string){
         }
         return res.json()
     }
-    const {data, error, isLoading, mutate} = useSWR(uid, fetcher); 
+    const {data, error, isLoading, mutate} = useSWR(uid, fetcher, {onErrorRetry: (error, key, config, revalidate, {retryCount}) => {
+        if(retryCount >= 5) return
+    }}); 
     return {data, error, isLoading, mutate}
 }
 

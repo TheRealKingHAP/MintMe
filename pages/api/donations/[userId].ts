@@ -24,34 +24,34 @@ export default async function handler(
   switch(req.method) {
     case 'GET':
         try{
-            const {userId}: DonationRequest = req.query as DonationRequest;
-            const mongoId = new ObjectId(userId)
-            const client: MongoClient = await clientPromise
-            const db: Db = client.db(MONGODB_DB)
-            const collection: Collection = db.collection(DONATION_COLLECTION_NAME ?? '')
-            const donationsSchema: DonationDbSchema[] = (await collection.find({"receiver": mongoId}).sort({"amount": -1}).limit(10).toArray()) as DonationDbSchema[]
-            let signatures: string[] = []
-            donationsSchema.map((donation) => {
-              signatures.push(donation.signature)
+          const {userId}: DonationRequest = req.query as DonationRequest;
+          const mongoId = new ObjectId(userId)
+          const client: MongoClient = await clientPromise
+          const db: Db = client.db(MONGODB_DB)
+          const collection: Collection = db.collection(DONATION_COLLECTION_NAME ?? '')
+          const donationsSchema: DonationDbSchema[] = (await collection.find({"receiver": mongoId}).sort({"amount": -1}).limit(10).toArray()) as DonationDbSchema[]
+          let signatures: string[] = []
+          donationsSchema.map((donation) => {
+            signatures.push(donation.signature)
+          })
+          let parsedDonations = await MintMe().getTransactionsFromSignatures(signatures);
+          let donations: Donation[] = []
+          parsedDonations.map((data) => {
+            donations.push({
+              amount: data.info.lamports / LAMPORTS_PER_SOL,
+              //Convert Date Object to Month/Day/Year
+              date: `${data.date.getUTCMonth()+1}/${data.date.getUTCDate()}/${data.date.getFullYear()}`,
+              message: '',
+              sender: data.info.source.toString(),
+              receiver: {
+                id: {$oid: ''},
+                address: data.info.destination.toString()
+              }
             })
-            let parsedDonations = await MintMe().getTransactionsFromSignatures(signatures);
-            let donations: Donation[] = []
-            parsedDonations.map((data) => {
-              donations.push({
-                amount: data.info.lamports / LAMPORTS_PER_SOL,
-                //Convert Date Object to Month/Day/Year
-                date: `${data.date.getUTCMonth()+1}/${data.date.getUTCDate()}/${data.date.getFullYear()}`,
-                message: '',
-                sender: data.info.source.toString(),
-                receiver: {
-                  id: {$oid: ''},
-                  address: data.info.destination.toString()
-                }
-              })
-            })
-            res.status(200).json(donations)
-        } catch (error) {
-            res.status(400).json({error})
+          })
+          res.status(200).json(donations)
+        } catch (error: any) {
+            res.status(400).json(error.message)
         }
 
         break;

@@ -87,6 +87,7 @@ export const reqLogOut = async ({wallet, method}: RequestLogOut) => {
     return response
 }
 
+//Validate the JWT Token
 export const validateToken = ({token, returnData}: TokenValidation) => {
     try {
         const [publicKey, message, signature] = token.split('.')

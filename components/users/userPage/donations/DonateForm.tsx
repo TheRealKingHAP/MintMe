@@ -4,6 +4,8 @@ import { PublicKey, LAMPORTS_PER_SOL, Transaction, SystemProgram, Keypair, sendA
 import { useRouter } from 'next/router';
 import React, {SetStateAction, useState, useEffect, useCallback} from 'react'
 import { AiOutlineLoading } from 'react-icons/ai';
+import { Donation } from '../../../../src/models/Donation';
+import GetCurrentDate from '../../../../src/utils/GetCurrentDate';
 import { CoinPrice, Currency } from '../../../../types/users/userPage/donation/CoinPriceType';
 import SnackBar from '../../../notifications/SnackBar';
 
@@ -11,7 +13,7 @@ interface TransactionStatus{
     status: 'Success' | 'Error',
     message: string,
 }
-function DonateForm({username, user_wallet, id}: {username: string, user_wallet:string | PublicKey, id: string}) {
+function DonateForm({username, user_wallet, id, callBack}: {username: string, user_wallet:string | PublicKey, id: string, callBack: CallableFunction}) {
     const [coinPrice, setCoinPrice] = useState(0);
     const {connection} = useConnection()
     const router = useRouter()
@@ -107,6 +109,17 @@ function DonateForm({username, user_wallet, id}: {username: string, user_wallet:
             setIsLoading(false)
             setTransactionStatus({status: 'Success', message: 'Donation complete!'})
             ShowSnackbar()
+            const data: Donation = {
+                amount: amountCurrency,
+                sender: publicKey.toString(),
+                date: GetCurrentDate({format: 'MM/DD/YYYY'}),
+                message: '',
+                receiver: {
+                    id: {$oid: ''},
+                    address: user_wallet.toString()
+                }
+            }
+            callBack(data);
             return
         } catch (error: any) {
             setIsLoading(false)

@@ -5,7 +5,7 @@ import { Donation } from "../../models/Donation";
 
 export function MintMe() {
     async function getTransactionsFromSignatures(signatures: string []): Promise<SolanaParsedInstruction[]> {
-        const connection: Connection = new Connection(clusterApiUrl('devnet'), 'finalized');
+        const connection: Connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
         const transactions: (ParsedTransactionWithMeta | null)[] = await connection.getParsedTransactions(signatures);
         let parsedInstructions: SolanaParsedInstruction[] = []
         transactions.map((tx) => {

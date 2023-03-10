@@ -1,10 +1,6 @@
-import { ObjectId } from 'mongodb'
-import { GetServerSideProps } from 'next'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { ParsedUrlQuery } from 'querystring'
 import React, {useState, useEffect} from 'react'
-import { BsPerson, BsTwitch } from 'react-icons/bs'
+import { mutate } from 'swr'
 import SkeletonDonationBlock from '../../components/skeletons/userpage/SkeletonDonationBlock'
 import SkeletonDonationForm from '../../components/skeletons/userpage/SkeletonDonationForm'
 import SkeletonUserBanner from '../../components/skeletons/userpage/SkeletonUserBanner'
@@ -16,7 +12,6 @@ import UserBanner from '../../components/users/userPage/UserBanner'
 import useDonations from '../../src/hooks/my_account/useDonations'
 import { Donation } from '../../src/models/Donation'
 import { User } from '../../src/models/User'
-import { UserType } from '../../types/users/UserType'
 
 function UserPage() {
   const router = useRouter()
@@ -56,7 +51,7 @@ function UserPage() {
         </div>
         <div id='' className='flex-1'>
           {user ? 
-            <DonateForm id={user._id?.toString() || ''} username={user.username} user_wallet={user.public.public_wallet} />
+            <DonateForm callBack={(value: Donation) => donations.mutate()} id={user._id?.toString() || ''} username={user.username} user_wallet={user.public.public_wallet} />
           :
             <SkeletonDonationForm />
           }
