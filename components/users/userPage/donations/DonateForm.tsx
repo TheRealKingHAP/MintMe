@@ -68,8 +68,6 @@ function DonateForm({username, user_wallet, id, callBack}: {username: string, us
             setIsLoading(true)
             //Streamer or influencer Public Key
             const receiverPublicKey = new PublicKey(user_wallet);
-            //Fee Collector Public Key
-            const feeCollector = new PublicKey('EVU5vd36z6MBL8RJaqwsTUVxxKMXCX6d6XyqAAi2SG9Z')
             //Total donation
             const amount = qty * LAMPORTS_PER_SOL;            
             //Send and request the transaction to the back-end with the desire values

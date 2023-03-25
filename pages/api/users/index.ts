@@ -30,7 +30,7 @@ export default async function handler(
           else{
             const db: Db = client.db(process.env.MONGODB_DB)
             const collection: Collection = db.collection(process.env.USER_COLLECTION_NAME ?? '')
-            const users: User[] = (await collection.find({}).toArray()) as User[]
+            const users: User[] = (await collection.find({'country.name': req.query.country}).toArray()) as User[]
             res.status(200).json(users) 
           }
         } catch (error) {

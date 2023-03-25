@@ -12,6 +12,7 @@ import { Donation } from '../../src/models/Donation'
 import useSWR from 'swr';
 import useDonations from '../../src/hooks/my_account/useDonations'
 import Link from 'next/link'
+import SkeletonDonationBlock from '../../components/skeletons/userpage/SkeletonDonationBlock'
 
 type Props = {
 
@@ -19,22 +20,24 @@ type Props = {
 
 function Overview({}: Props) {
     const {wallet, signMessage, publicKey} = useWallet()
-    const router = useRouter()
     const {data, isLoading, error} = useUser()
-    const {connection} = useConnection()
-    const fee_collector = new Fee_Collector();
+    const router = useRouter();
     const donations = useDonations(data?._id?.toString() || '');
-    if(isLoading || donations.isLoading || !publicKey){
+    console.log(donations.data)
+    if(isLoading || donations.isLoading){
         return(
             <div className='w-full h-[calc(100vh-96px)]  flex items-center justify-center'>
                 <CgSpinner  className='text-violet-500 w-10 h-10 animate-spin'/>
             </div>
         )
     }
+    if(!publicKey && !isLoading){
+        router.push('/')
+    }
     return (
         <AccountPageLayout selectedOptionMenu={0}>
             <div className='w-full bg-white dark:bg-dark-mode-background-background'>
-                {data && donations.data ?
+                {data ?
                     <div className='py-5 flex flex-col items-center space-y-12 text-gray-700 dark:text-white'>
                         <section className='flex flex-col items-center space-y-12'>
                             <h4 className='font-bold text-2xl'>Hello, {data?.username}</h4>
@@ -47,7 +50,11 @@ function Overview({}: Props) {
                             <DataChart qty={25} title='Top donation'/>
                         </section>
                         <section className='w-3/4 landscape:2xl:w-1/3'>
-                            <DonationBlock title='Donations' donations={donations.data} />
+                            {donations.data ? 
+                                <DonationBlock title='Donations' donations={donations.data} />
+                                :
+                                <SkeletonDonationBlock />
+                            }
                         </section>
                         
                     </div>

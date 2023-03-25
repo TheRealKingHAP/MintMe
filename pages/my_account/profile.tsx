@@ -88,6 +88,9 @@ function Profile({}: Props) {
             </div>
         )
     }
+    if(!publicKey && !isLoading){
+        router.push('/')
+    }
     return (
         <AccountPageLayout selectedOptionMenu={1}>
             <SnackBar isVisible={snackBar.isVisible} status={snackBar.status} message={snackBar.message}/>

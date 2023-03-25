@@ -75,9 +75,8 @@ export default async function handler(
       let signature: Uint8Array = convertToUint8Array(signedMessage.provider, signedMessage.signature);
       let verified = VerifySign(message, signature, publicKey.toBytes());
       if(!verified){
-        throw 'Cannot verified the sign'
+        throw Error('Cannot verified the sign')
       }
-      console.log(isSessionValid.status)
       let profilepic: string = user.profile_pic.split(';base64,').pop() || ''
       let bannerImg: string = user.public.banner_img.split(';base64,').pop() || ''
       let imgBuffer: Buffer = Buffer.from(profilepic, 'base64');
@@ -89,13 +88,12 @@ export default async function handler(
         {"username": user.username},
         {"email": user.email}
       ]})) as User
-      console.log(verifyUserAviability);
       if(verifyUserAviability){
         if (verifyUserAviability.username == user.username){
-          throw 'Sorry the username is already in use'
+          throw Error('Sorry the username is already in use')
         }
         if(verifyUserAviability.email == user.email) {
-          throw 'Sorry the email is already in use'
+          throw Error('Sorry the email is already in use')
         }
       }
       const compressedImage: Buffer = await CompressImage(imgBuffer);
@@ -137,10 +135,8 @@ export default async function handler(
         throw "Cannot signup user to database"
         
       })
-      console.log(user.username)
 
     }catch (error: any){
-      console.log(error.message)
       res.status(400).send({error: error.message})
     }      
       break;

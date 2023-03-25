@@ -14,6 +14,7 @@ import { User } from '../../src/models/User';
 import { Platform } from '../../types/forms/PlatformType';
 import { Country } from '../../types/forms/CountryType';
 import {sign} from 'tweetnacl';
+import validateUserData, { Validator } from '../../src/utils/Security/validateData';
 
 type Props = {
   loadingCallBack: CallableFunction,
@@ -27,6 +28,7 @@ function SignupBlock({loadingCallBack, finishedCallBack, idx, changeFormStep}: P
   const {setVisible} = useWalletModal();
   const [formSelectIDX, setFormSelectIDX] = useState<number>(idx);
   const [acceptedTC, setAcceptedTC] = useState<boolean>(false);
+  const [error, setError] = useState<Validator>({message: '', error: false});
   const [data, setData] = useState<User>({
     email: '',
     country: {name: '', code: ''},
@@ -64,7 +66,7 @@ function SignupBlock({loadingCallBack, finishedCallBack, idx, changeFormStep}: P
       if(!sign.detached.verify(message, signature, publicKey.toBytes())) throw new Error('Invalid signature!');
       return {signature, publicKey, provider}
     } catch (error: any) {
-      throw new Error('Signing message failed' + error.message)
+      return null
     }
   }
   const changeBioData = (key: 'title' | 'description' | 'thumbnail' | 'introduction',value: string) => {
@@ -186,7 +188,15 @@ function SignupBlock({loadingCallBack, finishedCallBack, idx, changeFormStep}: P
   }
   async function handleSubmit (e: React.FormEvent<HTMLFormElement>){
     e.preventDefault();
+    const isValid: Validator = validateUserData(data);
+    if(isValid.error){
+      setError((prev) => isValid);
+      return
+    }
     let signedMessage = await handleSign()
+    if(!signedMessage){
+      return
+    }
     loadingCallBack(true)
     let user: User = {
       ...data, 
@@ -197,7 +207,6 @@ function SignupBlock({loadingCallBack, finishedCallBack, idx, changeFormStep}: P
     }
     if(acceptedTC && signedMessage){
       try {
-        console.log(user)
         const res = await fetch('http://localhost:3000/api/users/addUser',
           {method: 'POST',
           body: JSON.stringify({user, signedMessage})
@@ -205,14 +214,14 @@ function SignupBlock({loadingCallBack, finishedCallBack, idx, changeFormStep}: P
         )
         loadingCallBack(false)
         if(!res.ok){
-          let error = await res.text()
-          throw error
+          let {error} = await res.json()
+          throw Error(error)
         }
         if(res.ok){
           finishedCallBack(true, data.username, null, 'success')
         }  
       } catch (error: any) {
-        finishedCallBack(true, data.username, error, null)
+        finishedCallBack(true, data.username, error.message, null)
       }
     }
     return
@@ -232,6 +241,7 @@ function SignupBlock({loadingCallBack, finishedCallBack, idx, changeFormStep}: P
           }
           <button disabled={wallet?.adapter.connected && acceptedTC ? false : true} type={'submit'} className={`p-2 mt-24 w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium ${idx === formsLength ? 'block' : 'hidden'} `}>{'Sign up'}</button>
         </form>
+        {error.error && <p className='font-light text-violet-500 text-center w-3/4 landscape:2xl:w-max'>{error.message}</p>}
         <button type={'button'} onClick={idx == formsLength ? () => {} : () => handleFormStepChange('Next')} className={`p-2 mt-24  w-24 rounded-3xl bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 text-white font-medium ${idx === formsLength ? 'hidden' : 'block'} `}>{'Next'}</button>      
     </div>
   )

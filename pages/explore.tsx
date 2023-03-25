@@ -3,15 +3,15 @@ import Link from 'next/link'
 import React, { useState, useEffect} from 'react'
 import SkeletonUserCard from '../components/skeletons/SkeletonUserCard'
 import UserCard from '../components/users/UserCard'
+import Countries from '../constants/countries'
 import { User } from '../src/models/User'
 import { UserType } from '../types/users/UserType'
 
 const Explore = () => {
     const [users, setUsers] = useState<User[]>([])
-    const [selectedCountry, setSelectedCountry] = useState('');
+    const [selectedCountry, setSelectedCountry] = useState('México');
     //Filter the user countries and remove the duplicated ones
-    const userCountries: string[] = users.map((m) => m.country.name);
-    const result: string[] = Array.from(new Set(userCountries));
+    const {countries} = new Countries()
     //Handle the select element when option is changed
     const handleChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
         setSelectedCountry(event.currentTarget.value);
@@ -23,7 +23,7 @@ const Explore = () => {
     //Fetch the list of users from api
     const getUsers = async () => {
         let userList: User[] = []
-        const result = await fetch('http://localhost:3000/api/users')
+        const result = await fetch(`http://localhost:3000/api/users?country=${selectedCountry}`)
         .then(res => res.json())
         .then((data: User[]) => userList = data)
         .catch(err => console.log(err.message))
@@ -35,16 +35,16 @@ const Explore = () => {
     }
     useEffect (() => {
         getUsers()
-    }, [])
+    }, [selectedCountry])
     return (
         <div className='h-max flex flex-col bg-white dark:bg-dark-mode-background-background justify-center items-center pt-[72px] space-y-20'>
             <h2 className='mt-20 text-lg lg:text-xl xl:text-2xl 2xl:text-3xl  w-3/4 lg:w-max text-center text-gray-800 dark:text-white font-bold'>Checkout the streamers working with us</h2>
             <div className=' w-3/4 flex flex-col items-center lg:items-start space-y-10'>
                 <form>
                     <label className='font-semibold text-gray-800 dark:text-white'>Filter by country: </label>
-                    <select name='countryFilter' className='w-max border-violet-500 bg-white dark:bg-dark-mode-background-hover-color border-2 rounded-lg outline-none' value={selectedCountry} onChange={handleChange}>
-                        {result.map((item, index) => (
-                            <option value={item} key={index}>{item}</option>
+                    <select name='countryFilter' className='w-24 border-violet-500 bg-white dark:bg-dark-mode-background-hover-color border-2 rounded-lg outline-none' value={selectedCountry} onChange={handleChange}>
+                        {countries.map((country, index) => (
+                            <option value={country.name} key={index}>{country.name}</option>
                         ))}
                     </select>
                 </form>
