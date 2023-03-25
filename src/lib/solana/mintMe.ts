@@ -26,7 +26,7 @@ export function MintMe() {
         })
         return parsedInstructions 
     }
-    function getUserDonations(id: string){
+    function GetUserDonations(id: string){
         const uid: Key = `/api/donations/${id}`;
         const fetcher: Fetcher <Donation[], string> = async(id) => {
             const res = await fetch(id)
@@ -39,6 +39,6 @@ export function MintMe() {
         const {data, error, isLoading, mutate} = useSWR(uid, fetcher); 
         return {data, error, isLoading, mutate}
     }
-    return {getTransactionsFromSignatures, getUserDonations}
+    return {getTransactionsFromSignatures, getUserDonations: GetUserDonations}
 }
 

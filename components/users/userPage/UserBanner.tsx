@@ -34,7 +34,7 @@ function UserBanner({username, profile_pic, banner_img, social_media } : UserBan
               {platform.platforms.map((platform, index) =>{
                 if(social_media[platform.name.toLowerCase() as keyof SocialMedia]){
                   return (
-                    <a href={social_media[platform.name.toLowerCase() as keyof SocialMedia]} target='_blank' key={index}><li className='relative h-5 w-5'><Image src={platform.logo} layout='fill' objectFit='contain' /></li></a>
+                    <a href={social_media[platform.name.toLowerCase() as keyof SocialMedia]} target='_blank' rel='noreferrer' key={index}><li className='relative h-5 w-5'><Image src={platform.logo} layout='fill' objectFit='contain' /></li></a>
                   )
                 }
               })}

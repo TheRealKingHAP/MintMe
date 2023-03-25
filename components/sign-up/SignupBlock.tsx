@@ -150,13 +150,13 @@ function SignupBlock({loadingCallBack, finishedCallBack, idx, changeFormStep}: P
         return (
           <div className='w-full mt-12 landscape:2xl:mt-12 flex flex-col items-center'>
             <h3 className='text-center font-bold text-gray-800 dark:text-white text-2xl landscape:2xl:text-3xl'>Create an account</h3>
-            <p className='text-center mt-2 w-3/4 landscape:2xl:w-full text-base landscape:2xl:text-xl text-gray-400 dark:text-gray-300'>Let's get started, please enter the information required below</p>
+            <p className='text-center mt-2 w-3/4 landscape:2xl:w-full text-base landscape:2xl:text-xl text-gray-400 dark:text-gray-300'>Let&apos;s get started, please enter the information required below</p>
           </div>
         )
       case 1:
         return (
           <div className='w-full mt-12 landscape:2xl:mt-12 flex flex-col items-center'>
-            <h3 className='text-center font-bold text-gray-800 dark:text-white text-2xl landscape:2xl:text-3xl'>Let's finish your page</h3>
+            <h3 className='text-center font-bold text-gray-800 dark:text-white text-2xl landscape:2xl:text-3xl'>Let&apos;s finish your page</h3>
           </div>
         )
       case 2:

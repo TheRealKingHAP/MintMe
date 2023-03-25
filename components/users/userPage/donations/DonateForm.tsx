@@ -157,7 +157,7 @@ function DonateForm({username, user_wallet, id, callBack}: {username: string, us
                         
                         <button onClick={() => handleDonation(amountCrypto)} className=' bg-violet-500 text-white font-medium p-2 rounded-md cursor-pointer'>Donate</button>
                     }
-                    <span className='text-gray-400 dark:text-gray-400 text-sm'>Powered by <a target={'_blank'} href='https://www.coingecko.com/en/coins/solana' className='font-semibold text-violet-400'>CoinGecko</a></span>
+                    <span className='text-gray-400 dark:text-gray-400 text-sm'>Powered by <a target={'_blank'} rel='noreferrer' href='https://www.coingecko.com/en/coins/solana' className='font-semibold text-violet-400'>CoinGecko</a></span>
                 </div>
         </form>
     

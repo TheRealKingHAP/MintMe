@@ -2,12 +2,12 @@ import { User } from "../src/models/User";
 
 export const UserProp: User= {
     username: '',
-    country: '',
+    country: {code: '', name: ''},
     email: '',
     profile_pic:'',
     public:{
         banner_img: '',
-        main_platform:'',
+        main_platform:{base_url: '', logo: '', name: ''},
         public_wallet:'',
         feed:{
             bio:{
@@ -22,6 +22,8 @@ export const UserProp: User= {
             instagram:'',
             tiktok:'',
             twitch:'',
+            twitter: '',
+            youtube: ''
         }
     }
 }
