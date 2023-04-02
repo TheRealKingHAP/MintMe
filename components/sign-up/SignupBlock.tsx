@@ -60,11 +60,16 @@ function SignupBlock({loadingCallBack, finishedCallBack, idx, changeFormStep}: P
     try {
       if(!publicKey) throw new Error('Wallet not connected')
       if(!signMessage) throw new Error('Wallet does not support message siging!')
-      const message = new TextEncoder().encode('Please sign this message to complete sign up');
+      const req_message = await fetch('/api/auth/get_signup_message');
+      if(!req_message.ok){
+        throw Error('There was a problem requesting the message to sign')
+      }
+      const generated_message = await req_message.json() 
+      const message = new TextEncoder().encode(generated_message.message);
       const signature = await signMessage(message);
       const provider = wallet?.adapter.name
       if(!sign.detached.verify(message, signature, publicKey.toBytes())) throw new Error('Invalid signature!');
-      return {signature, publicKey, provider}
+      return {signature, publicKey, provider, generated_message_id: generated_message.id}
     } catch (error: any) {
       return null
     }

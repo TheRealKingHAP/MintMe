@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import LoaderComponent from '../components/LoaderComponent'
 import { BsCheckCircleFill, BsX } from 'react-icons/bs'
 import SnackBar from '../components/notifications/SnackBar'
+import Head from 'next/head'
 type Props = {}
 
 function SignUp({}: Props) {
@@ -29,6 +30,14 @@ function SignUp({}: Props) {
   }
   return (
     <div className='flex flex-col  w-full justify-start items-center landscape:2xl:h-[calc(100vh-96px)]'>
+    <Head>
+      <title>Sign up</title>
+      <meta name='description' content='Hi please sign up' />
+      <meta name="twitter:title" content="MintMe: Sign up page" />
+      <meta name="twitter:description" content="Hi please sign up" />            
+      <meta property='og:title' content='MintMe: Sign up page' />
+      <meta property='og:description' content='Hi please sign up' />
+    </Head>
       {isLoading || signUpFinished ?
         <div className='w-full h-[calc(100vh-96px)]'>
           <div id='Loading' className={` flex-col justify-center items-center space-y-24 h-full w-full ${!signUpFinished ? 'flex' : 'hidden'}`}>

@@ -1,5 +1,5 @@
 export interface FeedBlock {
-    title: string,
+    introduction: string,
     description: string,
     thumbnail: string,
     

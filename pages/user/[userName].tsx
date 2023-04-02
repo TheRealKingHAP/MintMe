@@ -12,6 +12,7 @@ import UserBanner from '../../components/users/userPage/UserBanner'
 import useDonations from '../../src/hooks/my_account/useDonations'
 import { Donation } from '../../src/models/Donation'
 import { User } from '../../src/models/User'
+import Head from 'next/head'
 
 function UserPage() {
   const router = useRouter()
@@ -31,6 +32,16 @@ function UserPage() {
   }, [router.isReady])
   return (
     <div className='h-max pb-12 space-y-12 dark:bg-dark-mode-background-background  flex flex-col items-center'>
+      <Head>
+        <title>{`MintMe: ${router.query.userName ?? 'User page'}`}</title>
+        <meta name='description' content={user?.public.feed.bio.description}/>
+        <meta name="twitter:title" content={'MintMe: '+user?.public.feed.bio.introduction} />
+        <meta name="twitter:description" content={user?.public.feed.bio.description}/>            
+        <meta name='twitter:image' content={user?.profile_pic ?? '../public/MintMeMain.svg'} />
+        <meta property='og:title' content={'MintMe: '+user?.public.feed.bio.introduction}/>
+        <meta property='og:description' content={user?.public.feed.bio.description} />
+        <meta property='og:image' content={user?.profile_pic ?? '../public/MintMeMain.svg'} />
+      </Head>
       {user ? 
         <UserBanner username={user.username} profile_pic={user.profile_pic} banner_img={user.public.banner_img} social_media={user.public.social_media} />
       : 
@@ -39,7 +50,7 @@ function UserPage() {
       <div id='Feed' className='w-3/4 h-max flex flex-col space-y-5 lg:space-y-0 lg:flex-row lg:space-x-10'>
         <div id='' className='flex-1 space-y-10'>
           {user ? 
-            <FeedBio title={user.public.feed.bio.title} description={user.public.feed.bio.description} thumbnail={user.public.feed.bio.thumbnail}/>
+            <FeedBio introduction={user.public.feed.bio.introduction} description={user.public.feed.bio.description} thumbnail={user.public.feed.bio.thumbnail}/>
           : 
             <SkeletonUserFeed />
           }

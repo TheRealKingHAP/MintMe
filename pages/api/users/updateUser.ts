@@ -112,10 +112,11 @@ export default async function handler(
 
       //Only do mutation if the user change the images
       if(prevData.profile_pic != user.profile_pic){
+
         let profilepic: string = user.profile_pic.split(';base64,').pop() || '';
         let profilePicBuffer: Buffer = Buffer.from(profilepic, 'base64');
         const compressedProfileImage: Buffer = await CompressImage(profilePicBuffer);
-        let result = await uploadFromBuffer(compressedProfileImage, `MintMe/${user._id}`)
+        let result = await uploadFromBuffer(compressedProfileImage, `MintMe/${user.username}`)
         .then((data) => {
           user = {...user, profile_pic: data.secure_url}
         }).catch((error) => {
@@ -129,7 +130,7 @@ export default async function handler(
         let bannerImg: string = user.public.banner_img.split(';base64,').pop() || '';
         let bannerImgBuffer: Buffer = Buffer.from(bannerImg, 'base64');
         const compressedBannerImg: Buffer = await CompressImage(bannerImgBuffer);
-        let result = await uploadFromBuffer(compressedBannerImg, `MintMe/${user._id}`)
+        let result = await uploadFromBuffer(compressedBannerImg, `MintMe/${user.username}`)
         .then((data) => {
           user = {...user, public:{...user.public, banner_img: data.secure_url}}
         }).catch((error) => {

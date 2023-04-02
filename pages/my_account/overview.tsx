@@ -13,6 +13,7 @@ import useSWR from 'swr';
 import useDonations from '../../src/hooks/my_account/useDonations'
 import Link from 'next/link'
 import SkeletonDonationBlock from '../../components/skeletons/userpage/SkeletonDonationBlock'
+import Head from 'next/head'
 
 type Props = {
 
@@ -22,8 +23,13 @@ function Overview({}: Props) {
     const {wallet, signMessage, publicKey} = useWallet()
     const {data, isLoading, error} = useUser()
     const router = useRouter();
-    const donations = useDonations(data?._id?.toString() || '');
-    console.log(donations.data)
+    const donations = useDonations(data?._id?.toString() || '', '/api/donations/user_donations');
+    //Parse donation amounts to an array of numbers
+    const donationsAmountArray = donations.data?.map((donation, idx) => donation.amount);
+    //Get total donations
+    const totalDonations = donationsAmountArray?.reduce((sum, num) => sum + num) as number;
+    //Get top donation
+    const topDonation = donationsAmountArray?.reduce((acumulate, current) => Math.max(acumulate, current)) as number;
     if(isLoading || donations.isLoading){
         return(
             <div className='w-full h-[calc(100vh-96px)]  flex items-center justify-center'>
@@ -36,6 +42,10 @@ function Overview({}: Props) {
     }
     return (
         <AccountPageLayout selectedOptionMenu={0}>
+            <Head>
+                <title>{`Overview`}</title>
+                <meta name="robots" content="noindex" />
+            </Head>
             <div className='w-full bg-white dark:bg-dark-mode-background-background'>
                 {data ?
                     <div className='py-5 flex flex-col items-center space-y-12 text-gray-700 dark:text-white'>
@@ -46,8 +56,8 @@ function Overview({}: Props) {
                             </div>
                         </section>
                         <section id='Charts' className='grid grid-cols-2 gap-5 items-center justify-items-center'>
-                            <DataChart qty={150} title='Total donations' description='(30 days)' className='' />
-                            <DataChart qty={25} title='Top donation'/>
+                            <DataChart qty={totalDonations} title='Total donations' description='' className='' />
+                            <DataChart qty={topDonation} title='Top donation'/>
                         </section>
                         <section className='w-3/4 landscape:2xl:w-1/3'>
                             {donations.data ? 

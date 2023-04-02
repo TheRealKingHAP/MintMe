@@ -2,14 +2,11 @@ import React, {useState, useEffect} from 'react'
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWalletModal, WalletDisconnectButton, WalletIcon, WalletMultiButton} from '@solana/wallet-adapter-react-ui';
 import NavBarElement from './NavBarElement';
-import { BsPersonCircle, BsSearch } from 'react-icons/bs';
 import {HiMenu, HiOutlineX} from 'react-icons/hi';
-import {FaDonate} from 'react-icons/fa';
 import Link from 'next/link';
 import { Router, useRouter } from 'next/router';
 import Image from 'next/image';
 import ShortenString from '../../src/utils/ShortenString';
-import {sign} from 'tweetnacl';
 import { createAuthToken, reqAuth, reqLogOut } from '../../src/lib/api/web3auth';
 
 interface Props {
@@ -70,7 +67,7 @@ function NavBar({className}: Props) {
         <Link href={'/'}>
           <a className='font-bold text-2xl text-gray-700 dark:text-white flex items-center space-x-2'>
             <div className='bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full relative h-12 w-12'>
-              <Image src={'/mintMeMain.svg'} alt={'Logo'} layout='fill' objectFit='contain' />
+              <Image src={'/MintMeMain.svg'} alt={'Logo'} layout='fill' objectFit='contain' />
             </div>
             <span>MintMe</span>
             <div id='Beta-tag' className='text-xs font-light border-2 border-green-500 rounded-md p-1 text-green-500'>Beta</div>

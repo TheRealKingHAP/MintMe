@@ -11,6 +11,7 @@ import { useRouter } from 'next/router'
 import {sign} from 'tweetnacl';
 import SnackBar from '../../components/notifications/SnackBar'
 import Link from 'next/link'
+import Head from 'next/head'
 
 type Props = {}
 type SnackBar = {
@@ -93,6 +94,10 @@ function Profile({}: Props) {
     }
     return (
         <AccountPageLayout selectedOptionMenu={1}>
+            <Head>
+                <title>{`Edit profile`}</title>
+                <meta name="robots" content="noindex" />
+            </Head>
             <SnackBar isVisible={snackBar.isVisible} status={snackBar.status} message={snackBar.message}/>
             <div className='w-full bg-white dark:bg-dark-mode-background-background'>
                 {data ?

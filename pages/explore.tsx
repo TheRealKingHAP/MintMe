@@ -6,6 +6,7 @@ import UserCard from '../components/users/UserCard'
 import Countries from '../constants/countries'
 import { User } from '../src/models/User'
 import { UserType } from '../types/users/UserType'
+import Head from 'next/head'
 
 const Explore = () => {
     const [users, setUsers] = useState<User[]>([])
@@ -38,6 +39,14 @@ const Explore = () => {
     }, [selectedCountry])
     return (
         <div className='h-max flex flex-col bg-white dark:bg-dark-mode-background-background justify-center items-center pt-[72px] space-y-20'>
+            <Head>
+                <title>Explore page</title>
+                <meta name='description' content='Hi welcome to the MintMe explore page, here you can find all the users that are currently accepting donations via MintMe' />
+                <meta name="twitter:title" content="MintMe: Explore page" />
+                <meta name="twitter:description" content="Hi welcome to the MintMe explore page, here you can find all the users that are currently accepting donations via MintMe" />            
+                <meta property='og:title' content='MintMe: Explore page' />
+                <meta property='og:description' content='Hi welcome to the MintMe explore page, here you can find all the users that are currently accepting donations via MintMe' />
+            </Head>
             <h2 className='mt-20 text-lg lg:text-xl xl:text-2xl 2xl:text-3xl  w-3/4 lg:w-max text-center text-gray-800 dark:text-white font-bold'>Checkout the streamers working with us</h2>
             <div className=' w-3/4 flex flex-col items-center lg:items-start space-y-10'>
                 <form>

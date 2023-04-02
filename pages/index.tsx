@@ -11,6 +11,10 @@ const Home: NextPage = () => {
       <Head>
         <title>MintMe</title>
         <meta name="description" content="Web 3.0 crypto donation service for streamers and content creators" />
+        <meta name="twitter:title" content="MintMe" />
+        <meta name="twitter:description" content="Welcome to MintMe! here is the place where you can accept donations and get support from your community in crypto with Solana." />            
+        <meta property='og:title' content='MintMe' />
+        <meta property='og:description' content='Welcome to MintMe! here is the place where you can accept donations and get support from your community in crypto with Solana.' />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className='bg-white dark:bg-dark-mode-background-background flex flex-col h-max  space-y-16 landscape:space-y-16 pb-5  items-center landscape:2xl:space-y-10 text-gray-800'>

@@ -20,8 +20,10 @@ type ReqData = {
   signedMessage: {
     signature: any,
     provider: string,
-    publicKey: string
+    publicKey: string,
+    generated_message_id: string
   },
+
 }
 export const config = {
   api: {
@@ -56,7 +58,6 @@ export default async function handler(
     case 'POST':
     try{
       //message does not match the client side message this is for testing purposes only
-      const message = new TextEncoder().encode('Please sign this message to complete sign up');
       const jwt = req.cookies.MintMeJWT
       if(!jwt){
         throw 'Sorry there was an error with sign authentication'
@@ -71,9 +72,18 @@ export default async function handler(
       let user: User = data.user
       let signedMessage = data.signedMessage
       let publicKey = new PublicKey(signedMessage.publicKey)
+      let message_id = new ObjectId(data.signedMessage.generated_message_id)
+      const client: MongoClient = await clientPromise
+      const db: Db = client.db(process.env.MONGODB_DB)
+      const collection: Collection = db.collection(process.env.USER_COLLECTION_NAME ?? '')
+      const message = await collection.findOne({'_id': message_id});
+      if(!message){
+        throw Error('There was an error verifying the signature')
+      }
       //Convert signature passed from Client to Uint8Array and Verify the sign
       let signature: Uint8Array = convertToUint8Array(signedMessage.provider, signedMessage.signature);
-      let verified = VerifySign(message, signature, publicKey.toBytes());
+      let verified = VerifySign(new TextEncoder().encode(message.message), signature, publicKey.toBytes());
+      await collection.deleteOne({'_id': message_id});
       if(!verified){
         throw Error('Cannot verified the sign')
       }
@@ -81,12 +91,10 @@ export default async function handler(
       let bannerImg: string = user.public.banner_img.split(';base64,').pop() || ''
       let imgBuffer: Buffer = Buffer.from(profilepic, 'base64');
       let bannerBuffer: Buffer = Buffer.from(bannerImg, 'base64');
-      const client: MongoClient = await clientPromise
-      const db: Db = client.db(process.env.MONGODB_DB)
-      const collection: Collection = db.collection(process.env.USER_COLLECTION_NAME ?? '')
       const verifyUserAviability: User = (await collection.findOne({"$or":[
         {"username": user.username},
-        {"email": user.email}
+        {"email": user.email},
+        {"public.public_wallet": user.public.public_wallet}
       ]})) as User
       if(verifyUserAviability){
         if (verifyUserAviability.username == user.username){
@@ -95,6 +103,9 @@ export default async function handler(
         if(verifyUserAviability.email == user.email) {
           throw Error('Sorry the email is already in use')
         }
+        if(verifyUserAviability.public.public_wallet == user.public.public_wallet){
+          throw Error('Sorry the wallet is already in use')
+        }
       }
       const compressedImage: Buffer = await CompressImage(imgBuffer);
       const compressedBanner: Buffer = await CompressImage(bannerBuffer);
@@ -102,7 +113,7 @@ export default async function handler(
         return new Promise<UploadApiResponse | UploadApiErrorResponse>((resolve, reject) => {
           let cloudinary_upload_stream = cloudinary.uploader.upload_stream(
             {
-              folder: `MintMe/${user._id}`,
+              folder: `MintMe/${user.username}`,
             },
             (error, result) => {
               if(result){

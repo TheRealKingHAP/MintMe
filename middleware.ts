@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { validateToken } from "./src/lib/api/web3auth";
-
+import {useWallet} from '@solana/wallet-adapter-react'
 
 
 export function middleware(req: NextRequest){
@@ -10,8 +10,10 @@ export function middleware(req: NextRequest){
     if(!jwt) {
         return NextResponse.redirect('http:localhost:3000/')
     }
-    if(url.includes('/my_account')){
+    /*if(url.includes('/my_account')){
         try {
+            const connection = useWallet()
+            console.log('Wallet', connection.publicKey)
             const isValid = validateToken({token: jwt, returnData: "Expiration-Time"})
             if(!isValid.status){
                 throw 'Error'
@@ -25,7 +27,7 @@ export function middleware(req: NextRequest){
             })
             return NextResponse.redirect('http:localhost:3000/')
         }
-    }
+    }*/
     return NextResponse.next()
 }
 
