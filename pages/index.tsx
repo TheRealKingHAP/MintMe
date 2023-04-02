@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import CryptoChartBlock from '../components/homepage/CryptoChart/CryptoChartBlock'
 import TopUsers from '../components/homepage/TopUser/TopUsers'
+import {Player} from '@lottiefiles/react-lottie-player'
 
 const Home: NextPage = () => {
   return (
@@ -21,7 +22,7 @@ const Home: NextPage = () => {
         <div id='section-1' className='w-full h-screen landscape:h-max landscape:2xl:h-screen landscape:space-y-16 landscape:2xl:space-y-0  flex flex-col-reverse 2xl:flex-row'>
           <div className='landscape:2xl:h-3/4 w-full flex justify-center 2xl:items-center'>
             <div className='relative h-56 w-56 landscape:mt-16 landscape:2xl:mt-0 xl:h-[30rem] xl:w-[30rem]'>
-              <Image src={'/money_transfer.svg'} layout='fill' objectFit='contain'/>
+              <Player id='HomeAnimation' className='h-full w-full' loop autoplay background='transparent' src={'https://lottie.host/65d22ae1-d031-44cd-a865-390b79d29f80/wkyTYCsQHt.json'} />
             </div>
           </div>
           <div className='h-3/4 w-full  flex flex-col items-center text-center 2xl:text-left 2xl:items-start justify-center space-y-10 2xl:space-y-16 px-12'>
