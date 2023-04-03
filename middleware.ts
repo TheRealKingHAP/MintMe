@@ -8,7 +8,7 @@ export function middleware(req: NextRequest){
     const jwt = cookies.get('MintMeJWT');
     const url = req.url
     if(!jwt) {
-        return NextResponse.redirect('http:localhost:3000/')
+        return NextResponse.redirect('/')
     }
     /*if(url.includes('/my_account')){
         try {
