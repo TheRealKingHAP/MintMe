@@ -11,7 +11,7 @@ function TopUsers({}: Props) {
   const [users, setUsers] = useState<User[]>()
   const getTopUsers = async () => {
     let userList: User[] = []
-    const result = await fetch('http://localhost:3000/api/users?topusers=true')
+    const result = await fetch('/api/users?topusers=true')
     .then(res => res.json())
     .then((data: User[]) => userList = data)
     .catch(err => console.log(err.message))
