@@ -60,7 +60,7 @@ function Profile({}: Props) {
             if(!signedMessage){
                 throw Error('Sorry, please sign the message')
             }
-            const update = await fetch(`${router.basePath}/api/users/updateUser`, {
+            const update = await fetch(`/api/users/updateUser`, {
                 body: JSON.stringify({user: value, signedMessage}),
                 method: 'POST'
             })

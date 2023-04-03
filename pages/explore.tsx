@@ -24,7 +24,7 @@ const Explore = () => {
     //Fetch the list of users from api
     const getUsers = async () => {
         let userList: User[] = []
-        const result = await fetch(`http://localhost:3000/api/users?country=${selectedCountry}`)
+        const result = await fetch(`/api/users?country=${selectedCountry}`)
         .then(res => res.json())
         .then((data: User[]) => userList = data)
         .catch(err => console.log(err.message))
