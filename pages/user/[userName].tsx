@@ -20,7 +20,7 @@ function UserPage() {
   const donations = useDonations(user?._id?.toString() || '')
   async function getData (id?: string | string[]){
     let userData: User = {} as User
-    const reqUsers = await fetch(`http://localhost:3000/api/users/${id}`)
+    const reqUsers = await fetch(`/api/users/${id}`)
     .then(res => res.json())
     .then((data: User) => userData = data)
     .catch(err => console.log(err.message))
