@@ -5,7 +5,6 @@ import { NextRequest } from 'next/server';
 import nacl from 'tweetnacl';
 
 
-const baseUrl = 'http:localhost:3000'
 type AuthToken = {
     action: string,
     wallet: MessageSigner,
@@ -37,7 +36,7 @@ type ValidateTokenReturn = {
     publicKey?: string
 }
 export const createAuthToken = async ({action, wallet}: AuthToken) => {
-    const res = await fetch('http://localhost:3000/api/auth/get_message')
+    const res = await fetch('/api/auth/get_message')
     const {message} = await res.json()
     if(message == 'skip'){
         return null
